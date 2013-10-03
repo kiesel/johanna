@@ -44,4 +44,8 @@ public class SessionStore {
         this.store.remove(id);
         return true;
     }
+
+    public Session getSession(String id) {
+        return this.store.get(id);
+    }
 }

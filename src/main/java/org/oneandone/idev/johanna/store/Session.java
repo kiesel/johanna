@@ -6,6 +6,7 @@ package org.oneandone.idev.johanna.store;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,6 +67,10 @@ public class Session {
     
     public void terminate() {
         // NOOP
+    }
+    
+    public Set<String> keys() {
+        return this.values.keySet();
     }
 
 }

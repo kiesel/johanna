@@ -9,6 +9,9 @@ import org.oneandone.idev.johanna.protocol.impl.HannahEchoRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import org.oneandone.idev.johanna.protocol.impl.HannahSessionIsValidRequest;
+import org.oneandone.idev.johanna.protocol.impl.HannahSessionKeysRequest;
+import org.oneandone.idev.johanna.protocol.impl.HannahSessionSetTimeoutRequest;
 import org.oneandone.idev.johanna.protocol.impl.HannahSessionTerminateRequest;
 
 /**
@@ -24,8 +27,8 @@ public class HannahRequestFactory {
         this.cmds.put("session_create", HannahSessionCreateRequest.class);
         this.cmds.put("session_terminate", HannahSessionTerminateRequest.class);
         this.cmds.put("session_isvalid", HannahSessionIsValidRequest.class);
-        // this.cmds.put("session_settimeout", HannahSessionSetTimeoutRequest.class);
-        // this.cmds.put("session_keys", HannahSessionKeysRequest.class);
+        this.cmds.put("session_settimeout", HannahSessionSetTimeoutRequest.class);
+        this.cmds.put("session_keys", HannahSessionKeysRequest.class);
         
         // this.cmds.put("var_write", HannahVarWriteRequest.class);
         // this.cmds.put("var_read", HannahVarReadRequest.class);
