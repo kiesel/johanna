@@ -17,7 +17,7 @@ public abstract class HannahRequest {
         this.command = command;
     }
     
-    public abstract void execute(SessionStore store);
+    public abstract HannahResponse execute(SessionStore store);
 
     @Override
     public int hashCode() {
@@ -39,5 +39,9 @@ public abstract class HannahRequest {
             return false;
         }
         return true;
+    }
+
+    protected String getCommand() {
+        return this.command;
     }
 }

@@ -4,6 +4,7 @@
  */
 package org.oneandone.idev.johanna.protocol;
 
+import org.oneandone.idev.johanna.store.Session;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
@@ -17,7 +18,8 @@ public class HannahSessionCreateRequest extends HannahRequest {
     }
 
     @Override
-    public void execute(SessionStore store) {
-        
+    public HannahResponse execute(SessionStore store) {
+        Session s= store.createSession();
+        return new HannahResponse(true, s.getId());
     }
 }

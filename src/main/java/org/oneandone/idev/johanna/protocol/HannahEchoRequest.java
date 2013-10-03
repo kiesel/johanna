@@ -17,7 +17,8 @@ public class HannahEchoRequest extends HannahRequest {
     }
     
     @Override
-    public void execute(SessionStore store) {
+    public HannahResponse execute(SessionStore store) {
+        return new HannahResponse(true, "You said: >" + this.getCommand() + "<");
     }
 
 }

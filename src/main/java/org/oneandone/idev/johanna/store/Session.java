@@ -31,7 +31,7 @@ public class Session {
         this(UUID.randomUUID(), new Date(), 86400);
     }
 
-    String getId() {
+    public String getId() {
         return this.id.toString();
     }
     
