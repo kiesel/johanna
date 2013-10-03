@@ -13,6 +13,9 @@ import org.oneandone.idev.johanna.protocol.impl.HannahSessionIsValidRequest;
 import org.oneandone.idev.johanna.protocol.impl.HannahSessionKeysRequest;
 import org.oneandone.idev.johanna.protocol.impl.HannahSessionSetTimeoutRequest;
 import org.oneandone.idev.johanna.protocol.impl.HannahSessionTerminateRequest;
+import org.oneandone.idev.johanna.protocol.impl.HannahVarDeleteRequest;
+import org.oneandone.idev.johanna.protocol.impl.HannahVarReadRequest;
+import org.oneandone.idev.johanna.protocol.impl.HannahVarWriteRequest;
 
 /**
  *
@@ -30,9 +33,9 @@ public class HannahRequestFactory {
         this.cmds.put("session_settimeout", HannahSessionSetTimeoutRequest.class);
         this.cmds.put("session_keys", HannahSessionKeysRequest.class);
         
-        // this.cmds.put("var_write", HannahVarWriteRequest.class);
-        // this.cmds.put("var_read", HannahVarReadRequest.class);
-        // this.cmds.put("var_delete", HannahVarDeleteRequest.class);
+        this.cmds.put("var_write", HannahVarWriteRequest.class);
+        this.cmds.put("var_read", HannahVarReadRequest.class);
+        this.cmds.put("var_delete", HannahVarDeleteRequest.class);
     }
 
     public HannahRequest createRequest(String i) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
