@@ -23,12 +23,19 @@ public class Session {
     public Session(UUID id, Date created, int ttl) {
         this.id = id;
         this.created = created;
-        this.ttl = ttl;
+        this.setTTL(ttl);
         this.values= new ConcurrentHashMap<String, String>();
     }
 
     public Session() {
         this(UUID.randomUUID(), new Date(), 86400);
+    }
+
+    public void setTTL(int ttl) {
+        this.ttl= ttl;
+    }
+    public int getTTL() {
+        return this.ttl;
     }
 
     public String getId() {
@@ -60,4 +67,5 @@ public class Session {
     public void terminate() {
         // NOOP
     }
+
 }

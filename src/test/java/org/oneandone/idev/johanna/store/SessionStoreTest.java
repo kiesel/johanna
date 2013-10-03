@@ -51,7 +51,7 @@ public class SessionStoreTest {
      */
     @Test
     public void testCreateSession() {
-        Session s= this.cut.createSession();
+        Session s= this.cut.createSession(10);
         assertTrue(this.cut.hasSession(s.getId()));
     }
 
@@ -60,7 +60,7 @@ public class SessionStoreTest {
      */
     @Test
     public void testTerminateSession() {
-        Session s= this.cut.createSession();
+        Session s= this.cut.createSession(10);
         this.cut.terminateSession(s.getId());
         assertFalse(this.cut.hasSession(s.getId()));
     }

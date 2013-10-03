@@ -23,8 +23,9 @@ public class SessionStore {
         return this.store.size();
     }
     
-    public Session createSession() {
+    public Session createSession(int ttl) {
         Session s= new Session();
+        s.setTTL(ttl);
         this.store.put(s.getId(), s);
         return s;
     }

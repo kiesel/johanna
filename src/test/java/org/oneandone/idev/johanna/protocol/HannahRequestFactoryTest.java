@@ -4,6 +4,7 @@
  */
 package org.oneandone.idev.johanna.protocol;
 
+import org.oneandone.idev.johanna.protocol.impl.HannahEchoRequest;
 import junit.framework.TestCase;
 import org.junit.Test;
 

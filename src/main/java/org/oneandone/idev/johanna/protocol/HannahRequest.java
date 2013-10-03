@@ -17,6 +17,15 @@ public abstract class HannahRequest {
         this.command = command;
     }
     
+    protected String paramAt(int i) {
+        String[] parts= this.command.split(" ");
+        if (i >= parts.length) {
+            return null;
+        }
+        
+        return parts[i];
+    }
+    
     public abstract HannahResponse execute(SessionStore store);
 
     @Override

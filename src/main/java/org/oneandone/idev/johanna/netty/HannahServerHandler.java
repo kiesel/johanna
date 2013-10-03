@@ -30,13 +30,13 @@ public class HannahServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        LOG.log(Level.INFO, "New client from " + ctx.name());
+        LOG.info("New client from " + ctx.name());
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        LOG.log(Level.INFO, "Client disconnect.");
+        LOG.info("Client disconnect.");
     }
 
     @Override
@@ -48,6 +48,7 @@ public class HannahServerHandler extends SimpleChannelInboundHandler<String> {
             request= this.factory.createRequest(i);
             response= request.execute(this.store);
         } catch (IllegalArgumentException e) {
+            LOG.warning(e.toString());
             response= new HannahResponse(false, "SYNTAX");
         }
         

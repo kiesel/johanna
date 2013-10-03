@@ -31,7 +31,7 @@ public class JHannahServer {
     }
     
     public void run() throws Exception {
-        LOG.log(Level.INFO, "Server startup.");
+        LOG.info("Server startup.");
         final SessionStore store= new SessionStore();
         
         EventLoopGroup bossGroup = new NioEventLoopGroup();

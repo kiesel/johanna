@@ -9,6 +9,9 @@ package org.oneandone.idev.johanna.protocol;
  * @author kiesel
  */
 public class HannahResponse {
+    public static final HannahResponse OK= new HannahResponse(true, "OK");
+    public static final HannahResponse BADSESS= new HannahResponse(false, "BADSESS");
+    
     private boolean success;
     private String data;
 
