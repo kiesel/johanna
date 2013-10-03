@@ -7,8 +7,8 @@ package org.oneandone.idev.johanna.protocol.impl;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.oneandone.idev.johanna.protocol.HannahRequest;
-import org.oneandone.idev.johanna.protocol.HannahResponse;
+import org.oneandone.idev.johanna.protocol.Request;
+import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.Session;
 import org.oneandone.idev.johanna.store.SessionStore;
 
@@ -16,14 +16,14 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public class HannahSessionKeysRequest extends SessionBasedRequest {
-    private static final Logger LOG = Logger.getLogger(HannahSessionKeysRequest.class.getName());
+public class SessionKeysRequest extends SessionBasedRequest {
+    private static final Logger LOG = Logger.getLogger(SessionKeysRequest.class.getName());
 
-    public HannahSessionKeysRequest(String command) {
+    public SessionKeysRequest(String command) {
         super(command);
     }
 
-    protected HannahResponse executeOnSession(SessionStore store, Session s) {
+    protected Response executeOnSession(SessionStore store, Session s) {
         Iterator<String> keyIterator= s.keys().iterator();
         StringBuffer buf= new StringBuffer();
         
@@ -32,6 +32,6 @@ public class HannahSessionKeysRequest extends SessionBasedRequest {
             buf.append(" ");
         }
         
-        return new HannahResponse(true, buf.toString());
+        return new Response(true, buf.toString());
     }
 }

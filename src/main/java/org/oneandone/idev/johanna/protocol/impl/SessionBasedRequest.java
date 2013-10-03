@@ -4,8 +4,8 @@
  */
 package org.oneandone.idev.johanna.protocol.impl;
 
-import org.oneandone.idev.johanna.protocol.HannahRequest;
-import org.oneandone.idev.johanna.protocol.HannahResponse;
+import org.oneandone.idev.johanna.protocol.Request;
+import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.Session;
 import org.oneandone.idev.johanna.store.SessionStore;
 
@@ -13,20 +13,20 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public abstract class SessionBasedRequest extends HannahRequest {
+public abstract class SessionBasedRequest extends Request {
 
     public SessionBasedRequest(String command) {
         super(command);
     }
 
     @Override
-    public HannahResponse execute(SessionStore store) {
+    public Response execute(SessionStore store) {
         Session s = store.getSession(this.paramAt(1));
         if (s == null) {
-            return HannahResponse.BADSESS;
+            return Response.BADSESS;
         }
         return executeOnSession(store, s);
     }
 
-    protected abstract HannahResponse executeOnSession(SessionStore store, Session s);
+    protected abstract Response executeOnSession(SessionStore store, Session s);
 }

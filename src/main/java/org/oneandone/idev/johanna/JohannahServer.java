@@ -15,18 +15,18 @@ import io.netty.handler.codec.string.StringEncoder;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oneandone.idev.johanna.netty.HannahServerHandler;
+import org.oneandone.idev.johanna.netty.JohannaServerHandler;
 import org.oneandone.idev.johanna.store.SessionStore;
     
 /**
  * Discards any incoming data.
  */
-public class JHannahServer {
-    private static final Logger LOG = Logger.getLogger(JHannahServer.class.getName());
+public class JohannahServer {
+    private static final Logger LOG = Logger.getLogger(JohannahServer.class.getName());
     
     private int port;
     
-    public JHannahServer(int port) {
+    public JohannahServer(int port) {
         this.port = port;
     }
     
@@ -49,7 +49,7 @@ public class JHannahServer {
                      ));
                      ch.pipeline().addLast("decoder", new StringDecoder(Charset.forName("iso-8859-1")));
                      ch.pipeline().addLast("encoder", new StringEncoder(Charset.forName("iso-8859-1")));
-                     ch.pipeline().addLast(new HannahServerHandler(store));
+                     ch.pipeline().addLast(new JohannaServerHandler(store));
                  }
              })
              .option(ChannelOption.SO_BACKLOG, 128)
@@ -77,6 +77,6 @@ public class JHannahServer {
         } else {
             port = 2001;
         }
-        new JHannahServer(port).run();
+        new JohannahServer(port).run();
     }
 }

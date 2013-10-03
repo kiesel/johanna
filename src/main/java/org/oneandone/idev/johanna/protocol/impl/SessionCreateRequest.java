@@ -6,8 +6,8 @@ package org.oneandone.idev.johanna.protocol.impl;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oneandone.idev.johanna.protocol.HannahRequest;
-import org.oneandone.idev.johanna.protocol.HannahResponse;
+import org.oneandone.idev.johanna.protocol.Request;
+import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.Session;
 import org.oneandone.idev.johanna.store.SessionStore;
 
@@ -15,18 +15,18 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public class HannahSessionCreateRequest extends HannahRequest {
-    private static final Logger LOG = Logger.getLogger(HannahSessionCreateRequest.class.getName());
+public class SessionCreateRequest extends Request {
+    private static final Logger LOG = Logger.getLogger(SessionCreateRequest.class.getName());
 
-    public HannahSessionCreateRequest(String command) {
+    public SessionCreateRequest(String command) {
         super(command);
     }
 
     @Override
-    public HannahResponse execute(SessionStore store) {
+    public Response execute(SessionStore store) {
         Session s= store.createSession(Integer.parseInt(this.paramAt(1)));
         LOG.log(Level.INFO, "Created session " + s.getId() + " w/ TTL " + s.getTTL());
         
-        return new HannahResponse(true, s.getId());
+        return new Response(true, s.getId());
     }
 }

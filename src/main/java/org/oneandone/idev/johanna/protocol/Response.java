@@ -8,15 +8,15 @@ package org.oneandone.idev.johanna.protocol;
  *
  * @author kiesel
  */
-public class HannahResponse {
-    public static final HannahResponse OK= new HannahResponse(true, "OK");
-    public static final HannahResponse BADSESS= new HannahResponse(false, "BADSESS");
-    public static final HannahResponse NOKEY= new HannahResponse(false, "NOKEY");
+public class Response {
+    public static final Response OK= new Response(true, "OK");
+    public static final Response BADSESS= new Response(false, "BADSESS");
+    public static final Response NOKEY= new Response(false, "NOKEY");
     
     private boolean success;
     private String data;
 
-    public HannahResponse(boolean success, String data) {
+    public Response(boolean success, String data) {
         this.success = success;
         this.data = data;
     }

@@ -10,10 +10,10 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public abstract class HannahRequest {
+public abstract class Request {
     private String command;
 
-    public HannahRequest(String command) {
+    public Request(String command) {
         this.command = command;
     }
     
@@ -26,7 +26,7 @@ public abstract class HannahRequest {
         return parts[i];
     }
     
-    public abstract HannahResponse execute(SessionStore store);
+    public abstract Response execute(SessionStore store);
 
     @Override
     public int hashCode() {
@@ -43,7 +43,7 @@ public abstract class HannahRequest {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final HannahRequest other = (HannahRequest) obj;
+        final Request other = (Request) obj;
         if ((this.command == null) ? (other.command != null) : !this.command.equals(other.command)) {
             return false;
         }

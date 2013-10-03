@@ -4,17 +4,17 @@
  */
 package org.oneandone.idev.johanna.protocol;
 
-import org.oneandone.idev.johanna.protocol.impl.HannahEchoRequest;
 import junit.framework.TestCase;
 import org.junit.Test;
+import org.oneandone.idev.johanna.protocol.impl.SessionCreateRequest;
 
 /**
  *
  * @author kiesel
  */
-public class HannahRequestFactoryTest extends TestCase {
+public class RequestFactoryTest extends TestCase {
     
-    public HannahRequestFactoryTest(String testName) {
+    public RequestFactoryTest(String testName) {
         super(testName);
     }
     
@@ -32,16 +32,16 @@ public class HannahRequestFactoryTest extends TestCase {
      * Test of createRequest method, of class HannahRequestFactory.
      */
     public void testcreateEchoRequest() throws Exception {
-        HannahRequestFactory instance = new HannahRequestFactory();
+        RequestFactory instance = new RequestFactory();
         assertEquals(
-                new HannahEchoRequest("echo Hello World"),
-                instance.createRequest("echo Hello World")
+                new SessionCreateRequest("session_create 86400"),
+                instance.createRequest("session_create 86400")
         );
     }
     
     @Test
     public void testCreateInvalidRequest() throws Exception {
-        HannahRequestFactory instance= new HannahRequestFactory();
+        RequestFactory instance= new RequestFactory();
         try {
             instance.createRequest("foobar");
             fail("Expected exception not caught.");

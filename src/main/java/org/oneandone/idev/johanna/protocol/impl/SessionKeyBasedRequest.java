@@ -4,8 +4,8 @@
  */
 package org.oneandone.idev.johanna.protocol.impl;
 
-import org.oneandone.idev.johanna.protocol.HannahRequest;
-import org.oneandone.idev.johanna.protocol.HannahResponse;
+import org.oneandone.idev.johanna.protocol.Request;
+import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.Session;
 import org.oneandone.idev.johanna.store.SessionStore;
 
@@ -20,16 +20,16 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
     }
 
     @Override
-    protected HannahResponse executeOnSession(SessionStore store, Session s) {
+    protected Response executeOnSession(SessionStore store, Session s) {
         String stor = this.paramAt(2);
         String name = this.paramAt(3);
 
         if (!"tmp".equals(stor)) {
-            return new HannahResponse(false, "BADSTOR Only tmp supported.");
+            return new Response(false, "BADSTOR Only tmp supported.");
         }
         
         return executeOnSessionKey(store, s, name);
     }
 
-    abstract protected HannahResponse executeOnSessionKey(SessionStore store, Session s, String name);
+    abstract protected Response executeOnSessionKey(SessionStore store, Session s, String name);
 }

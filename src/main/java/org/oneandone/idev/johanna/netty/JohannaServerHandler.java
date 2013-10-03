@@ -4,27 +4,27 @@
  */
 package org.oneandone.idev.johanna.netty;
 
-import org.oneandone.idev.johanna.protocol.HannahRequest;
-import org.oneandone.idev.johanna.protocol.HannahRequestFactory;
+import org.oneandone.idev.johanna.protocol.Request;
+import org.oneandone.idev.johanna.protocol.RequestFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oneandone.idev.johanna.protocol.HannahResponse;
+import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
  *
  * @author kiesel
  */
-public class HannahServerHandler extends SimpleChannelInboundHandler<String> {
-    private static final Logger LOG = Logger.getLogger(HannahServerHandler.class.getName());
+public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
+    private static final Logger LOG = Logger.getLogger(JohannaServerHandler.class.getName());
     private SessionStore store;
-    private HannahRequestFactory factory;
+    private RequestFactory factory;
     
-    public HannahServerHandler(SessionStore store) {
+    public JohannaServerHandler(SessionStore store) {
         this.store= store;
-        this.factory= new HannahRequestFactory();
+        this.factory= new RequestFactory();
     }
 
     @Override
@@ -41,15 +41,15 @@ public class HannahServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String i) throws Exception {
-        HannahRequest request;
-        HannahResponse response;
+        Request request;
+        Response response;
         
         try {
             request= this.factory.createRequest(i);
             response= request.execute(this.store);
         } catch (IllegalArgumentException e) {
             LOG.warning(e.toString());
-            response= new HannahResponse(false, "SYNTAX");
+            response= new Response(false, "SYNTAX");
         }
         
         ctx.write(response.toString());
