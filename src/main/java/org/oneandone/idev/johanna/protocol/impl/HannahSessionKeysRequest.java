@@ -16,19 +16,14 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public class HannahSessionKeysRequest extends HannahRequest {
+public class HannahSessionKeysRequest extends SessionBasedRequest {
     private static final Logger LOG = Logger.getLogger(HannahSessionKeysRequest.class.getName());
 
     public HannahSessionKeysRequest(String command) {
         super(command);
     }
 
-    @Override
-    public HannahResponse execute(SessionStore store) {
-        Session s= store.getSession(this.paramAt(1));
-        
-        if (s == null) return HannahResponse.BADSESS;
-        
+    protected HannahResponse executeOnSession(SessionStore store, Session s) {
         Iterator<String> keyIterator= s.keys().iterator();
         StringBuffer buf= new StringBuffer();
         
@@ -39,5 +34,4 @@ public class HannahSessionKeysRequest extends HannahRequest {
         
         return new HannahResponse(true, buf.toString());
     }
-    
 }

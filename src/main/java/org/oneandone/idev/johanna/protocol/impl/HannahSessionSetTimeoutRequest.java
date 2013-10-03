@@ -14,7 +14,7 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public class HannahSessionSetTimeoutRequest extends HannahRequest {
+public class HannahSessionSetTimeoutRequest extends SessionBasedRequest {
     private static final Logger LOG = Logger.getLogger(HannahSessionSetTimeoutRequest.class.getName());
 
     public HannahSessionSetTimeoutRequest(String command) {
@@ -22,12 +22,8 @@ public class HannahSessionSetTimeoutRequest extends HannahRequest {
     }
 
     @Override
-    public HannahResponse execute(SessionStore store) {
-        Session s= store.getSession(this.paramAt(1));
-        if (s == null) return HannahResponse.BADSESS;
-        
+    public HannahResponse executeOnSession(SessionStore store, Session s) {
         s.setTTL(Integer.parseInt(this.paramAt(2)));
         return HannahResponse.OK;
     }
-    
 }

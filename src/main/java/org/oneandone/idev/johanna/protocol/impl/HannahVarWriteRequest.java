@@ -14,26 +14,15 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public class HannahVarWriteRequest extends HannahRequest {
+public class HannahVarWriteRequest extends SessionKeyBasedRequest {
     private static final Logger LOG = Logger.getLogger(HannahVarWriteRequest.class.getName());
 
     public HannahVarWriteRequest(String command) {
         super(command);
     }
-
-    @Override
-    public HannahResponse execute(SessionStore store) {
-        String id= this.paramAt(1);
-        String stor= this.paramAt(2);
-        String name= this.paramAt(3);
+    
+    protected HannahResponse executeOnSessionKey(SessionStore store, Session s, String name) {
         String value= this.paramAt(4);
-        
-        Session s= store.getSession(id);
-        if (s == null) return HannahResponse.BADSESS;
-        
-        if (!"tmp".equals(stor)) {
-            return new HannahResponse(false, "BADSTOR Only tmp supported.");
-        }
         
         s.putValue(name, value);
         return HannahResponse.OK;

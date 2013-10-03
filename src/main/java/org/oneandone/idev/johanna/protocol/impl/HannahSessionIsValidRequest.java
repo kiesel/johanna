@@ -7,13 +7,14 @@ package org.oneandone.idev.johanna.protocol.impl;
 import java.util.logging.Logger;
 import org.oneandone.idev.johanna.protocol.HannahRequest;
 import org.oneandone.idev.johanna.protocol.HannahResponse;
+import org.oneandone.idev.johanna.store.Session;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
  *
  * @author kiesel
  */
-public class HannahSessionIsValidRequest extends HannahRequest {
+public class HannahSessionIsValidRequest extends SessionBasedRequest {
     private static final Logger LOG = Logger.getLogger(HannahSessionIsValidRequest.class.getName());
 
     public HannahSessionIsValidRequest(String command) {
@@ -21,8 +22,7 @@ public class HannahSessionIsValidRequest extends HannahRequest {
     }
 
     @Override
-    public HannahResponse execute(SessionStore store) {
-        boolean valid= store.hasSession(this.paramAt(1));
-        return (valid ? HannahResponse.OK : HannahResponse.BADSESS);
+    public HannahResponse executeOnSession(SessionStore store, Session s) {
+        return HannahResponse.OK;
     }
 }

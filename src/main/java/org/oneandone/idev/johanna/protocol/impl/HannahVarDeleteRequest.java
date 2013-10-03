@@ -14,7 +14,7 @@ import org.oneandone.idev.johanna.store.SessionStore;
  *
  * @author kiesel
  */
-public class HannahVarDeleteRequest extends HannahRequest {
+public class HannahVarDeleteRequest extends SessionKeyBasedRequest {
     private static final Logger LOG = Logger.getLogger(HannahVarDeleteRequest.class.getName());
 
     public HannahVarDeleteRequest(String command) {
@@ -22,20 +22,9 @@ public class HannahVarDeleteRequest extends HannahRequest {
     }
 
     @Override
-    public HannahResponse execute(SessionStore store) {
-        String id= this.paramAt(1);
-        String stor= this.paramAt(2);
-        String name= this.paramAt(3);
-        
-        Session s= store.getSession(id);
-        if (s == null) return HannahResponse.BADSESS;
-        
-        if (!"tmp".equals(stor)) {
-            return new HannahResponse(false, "BADSTOR Only tmp supported.");
-        }
-        
+    public HannahResponse executeOnSessionKey(SessionStore store, Session s, String name) {
         boolean removeValue = s.removeValue(name);
-        
-        return new HannahResponse(true, s.getValue(name));
+        if (!removeValue) return HannahResponse.NOKEY;
+        return HannahResponse.OK;
     }
 }
