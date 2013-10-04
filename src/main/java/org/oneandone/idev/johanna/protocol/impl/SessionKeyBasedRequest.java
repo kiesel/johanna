@@ -20,7 +20,7 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
     }
 
     @Override
-    protected Response executeOnSession(SessionStore store, Session s) {
+    protected Response processSession(SessionStore store, Session s) {
         String stor = this.paramAt(2);
         String name = this.paramAt(3);
 
@@ -28,8 +28,8 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
             return new Response(false, "BADSTOR Only tmp supported.");
         }
         
-        return executeOnSessionKey(store, s, name);
+        return processSessionKey(store, s, name);
     }
 
-    abstract protected Response executeOnSessionKey(SessionStore store, Session s, String name);
+    abstract protected Response processSessionKey(SessionStore store, Session s, String name);
 }

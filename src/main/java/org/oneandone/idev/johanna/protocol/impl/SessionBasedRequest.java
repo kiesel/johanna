@@ -20,7 +20,7 @@ public abstract class SessionBasedRequest extends Request {
     }
 
     @Override
-    public Response execute(SessionStore store) {
+    public Response process(SessionStore store) {
         Session s = store.getSession(this.paramAt(1));
         if (s == null) {
             return Response.BADSESS;
@@ -32,8 +32,8 @@ public abstract class SessionBasedRequest extends Request {
         }
         
         // Otherwise, perform request
-        return executeOnSession(store, s);
+        return processSession(store, s);
     }
 
-    protected abstract Response executeOnSession(SessionStore store, Session s);
+    protected abstract Response processSession(SessionStore store, Session s);
 }

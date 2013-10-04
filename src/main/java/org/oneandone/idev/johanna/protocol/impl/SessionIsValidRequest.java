@@ -22,7 +22,7 @@ public class SessionIsValidRequest extends SessionBasedRequest {
     }
 
     @Override
-    public Response executeOnSession(SessionStore store, Session s) {
+    public Response processSession(SessionStore store, Session s) {
         return Response.OK;
     }
 }

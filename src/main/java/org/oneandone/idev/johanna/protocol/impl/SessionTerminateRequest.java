@@ -19,7 +19,7 @@ public class SessionTerminateRequest extends Request {
     }
 
     @Override
-    public Response execute(SessionStore store) {
+    public Response process(SessionStore store) {
         boolean success= store.terminateSession(this.paramAt(1));
         return (success
                 ? Response.OK

@@ -26,7 +26,7 @@ public abstract class Request {
         return parts[i];
     }
     
-    public abstract Response execute(SessionStore store);
+    public abstract Response process(SessionStore store);
 
     @Override
     public int hashCode() {

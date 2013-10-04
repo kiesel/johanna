@@ -23,7 +23,7 @@ public class SessionKeysRequest extends SessionBasedRequest {
         super(command);
     }
 
-    protected Response executeOnSession(SessionStore store, Session s) {
+    protected Response processSession(SessionStore store, Session s) {
         Iterator<String> keyIterator= s.keys().iterator();
         StringBuffer buf= new StringBuffer();
         

@@ -22,7 +22,7 @@ public class VarReadRequest extends SessionKeyBasedRequest {
     }
 
     @Override
-    public Response executeOnSessionKey(SessionStore store, Session s, String name) {
+    public Response processSessionKey(SessionStore store, Session s, String name) {
         if (!s.hasValue(name)) return Response.NOKEY;
         return new Response(true, s.getValue(name));
     }

@@ -54,7 +54,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         
         try {
             request= this.factory.createRequest(i);
-            response= request.execute(this.store);
+            response= request.process(this.store);
         } catch (IllegalArgumentException e) {
             LOG.warning(e.toString());
             response= new Response(false, "SYNTAX");

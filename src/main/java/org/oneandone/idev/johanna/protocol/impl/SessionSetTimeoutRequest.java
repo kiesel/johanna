@@ -22,7 +22,7 @@ public class SessionSetTimeoutRequest extends SessionBasedRequest {
     }
 
     @Override
-    public Response executeOnSession(SessionStore store, Session s) {
+    public Response processSession(SessionStore store, Session s) {
         s.setTTL(Integer.parseInt(this.paramAt(2)));
         return Response.OK;
     }

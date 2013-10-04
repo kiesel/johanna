@@ -22,7 +22,7 @@ public class VarDeleteRequest extends SessionKeyBasedRequest {
     }
 
     @Override
-    public Response executeOnSessionKey(SessionStore store, Session s, String name) {
+    public Response processSessionKey(SessionStore store, Session s, String name) {
         boolean removeValue = s.removeValue(name);
         if (!removeValue) return Response.NOKEY;
         return Response.OK;
