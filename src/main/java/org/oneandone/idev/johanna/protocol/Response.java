@@ -14,16 +14,26 @@ public class Response {
     public static final Response NOKEY= new Response(false, "NOKEY");
     
     private boolean success;
+    private boolean close;
     private String data;
 
     public Response(boolean success, String data) {
         this.success = success;
+        this.close= false;
         this.data = data;
     }
 
+    public boolean getClose() {
+        return close;
+    }
+
+    public void setClose(boolean close) {
+        this.close = close;
+    }
+    
     @Override
     public String toString() {
-        StringBuffer buf= new StringBuffer(1024);
+        StringBuilder buf= new StringBuilder(1024);
         
         if (this.success) {
             buf.append("+OK ");

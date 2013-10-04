@@ -4,12 +4,13 @@
  */
 package org.oneandone.idev.johanna.netty;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.RequestFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oneandone.idev.johanna.protocol.Response;
@@ -61,7 +62,11 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         }
 
         LOG.log(Level.FINEST, "<<< {0}", response.toString());
-        ctx.write(response.toString());
+        ChannelFuture future= ctx.write(response.toString());
+        
+        if (response.getClose()) {
+            future.addListener(ChannelFutureListener.CLOSE);
+        }
     }
 
     @Override

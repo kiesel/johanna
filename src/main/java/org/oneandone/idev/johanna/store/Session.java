@@ -24,13 +24,13 @@ public class Session {
     private int ttl;
     
     private Map<String, String> values;
-    private Date lastmodified;
+    private Date expiryDate;
 
     public Session(UUID id, Date created, int ttl) {
         this.id = id;
         this.created = created;
-        this.lastmodified= new Date();
         this.setTTL(ttl);
+        this.touch();
         this.values= new ConcurrentHashMap<String, String>();
     }
 
@@ -41,7 +41,7 @@ public class Session {
     public final void setTTL(int ttl) {
         this.ttl= ttl;
     }
-    public int getTTL() {
+    public final int getTTL() {
         return this.ttl;
     }
 
@@ -84,11 +84,11 @@ public class Session {
     }
     
     public boolean hasExpired() {
-        return this.expiryDate().after(new Date());
+        return this.expiryDate().before(new Date());
     }
     
-    private Date expiryDate() {
-        return new Date(this.getLastModified().getTime() + this.getTTL());
+    public Date expiryDate() {
+        return this.expiryDate;
     }
 
     public boolean terminateIfExpired() {
@@ -100,12 +100,8 @@ public class Session {
         return true;
     }
 
-    private Date getLastModified() {
-        return this.lastmodified;
-    }
-
     private void touch() {
-        this.lastmodified= new Date();
+        this.expiryDate= new Date(new Date().getTime() + this.getTTL());
     }
 
 }

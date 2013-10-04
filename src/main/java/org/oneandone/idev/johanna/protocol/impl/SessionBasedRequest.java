@@ -4,6 +4,8 @@
  */
 package org.oneandone.idev.johanna.protocol.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.Session;
@@ -14,6 +16,7 @@ import org.oneandone.idev.johanna.store.SessionStore;
  * @author kiesel
  */
 public abstract class SessionBasedRequest extends Request {
+    private static final Logger LOG = Logger.getLogger(SessionBasedRequest.class.getName());
 
     public SessionBasedRequest(String command) {
         super(command);
@@ -25,6 +28,8 @@ public abstract class SessionBasedRequest extends Request {
         if (s == null) {
             return Response.BADSESS;
         }
+        
+        LOG.log(Level.INFO, "Session expired @ {0}", s.expiryDate());
         
         // Check for session expiry, first
         if (s.hasExpired()) {

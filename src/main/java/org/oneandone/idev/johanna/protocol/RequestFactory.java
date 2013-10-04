@@ -8,6 +8,7 @@ import org.oneandone.idev.johanna.protocol.impl.SessionCreateRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import org.oneandone.idev.johanna.protocol.impl.HangupRequest;
 import org.oneandone.idev.johanna.protocol.impl.SessionIsValidRequest;
 import org.oneandone.idev.johanna.protocol.impl.SessionKeysRequest;
 import org.oneandone.idev.johanna.protocol.impl.SessionSetTimeoutRequest;
@@ -34,6 +35,9 @@ public class RequestFactory {
         this.cmds.put("var_write", VarWriteRequest.class);
         this.cmds.put("var_read", VarReadRequest.class);
         this.cmds.put("var_delete", VarDeleteRequest.class);
+        
+        this.cmds.put("bye", HangupRequest.class);
+        this.cmds.put("exit", HangupRequest.class);
     }
 
     public Request createRequest(String i) throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
