@@ -25,6 +25,13 @@ public abstract class SessionBasedRequest extends Request {
         if (s == null) {
             return Response.BADSESS;
         }
+        
+        // Check for session expiry, first
+        if (s.hasExpired()) {
+            return Response.BADSESS;
+        }
+        
+        // Otherwise, perform request
         return executeOnSession(store, s);
     }
 

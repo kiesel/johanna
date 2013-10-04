@@ -8,6 +8,8 @@ import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.RequestFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oneandone.idev.johanna.protocol.Response;
@@ -30,17 +32,23 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        LOG.info("New client from " + ctx.name());
+        InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
+        LOG.log(Level.INFO, "> New connection from {0}:{1}", new Object[]{addr.getHostString(), addr.getPort()});
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        LOG.info("Client disconnect.");
+        InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
+        LOG.log(Level.INFO, "< New connection from {0}:{1}", new Object[]{addr.getHostString(), addr.getPort()});
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String i) throws Exception {
+        InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
+        LOG.log(Level.FINE, ">> Received message from {0}:{1}", new Object[]{addr.getHostString(), addr.getPort()});
+        LOG.log(Level.FINER, ">>> {0}", i);
+                
         Request request;
         Response response;
         
@@ -51,7 +59,8 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
             LOG.warning(e.toString());
             response= new Response(false, "SYNTAX");
         }
-        
+
+        LOG.log(Level.FINEST, "<<< {0}", response.toString());
         ctx.write(response.toString());
     }
 
@@ -63,11 +72,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        LOG.warning(cause.toString());
         ctx.close();
     }
-
-
-    
-    
 }

@@ -13,7 +13,6 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import java.nio.charset.Charset;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oneandone.idev.johanna.netty.JohannaServerHandler;
 import org.oneandone.idev.johanna.store.SessionStore;
@@ -37,7 +36,8 @@ public class JohannahServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            System.out.println("===> Starting Johanna Server...");
+            LOG.info("===> Starting Johanna Server.");
+
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
@@ -62,9 +62,9 @@ public class JohannahServer {
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
             f.channel().closeFuture().sync();
-            System.out.println("---> Shutting down server.");
+            LOG.info("===> Shutting down Johanna instance.");
         } finally {
-            System.out.println("---> Cleaning up...");
+            LOG.info("---> Cleanup.");
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
