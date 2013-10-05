@@ -24,8 +24,8 @@ public class SessionCreateRequest extends Request {
 
     @Override
     public Response process(SessionStore store) {
-        Session s= store.createSession(Integer.parseInt(this.paramAt(1)));
-        LOG.log(Level.INFO, "Created session " + s.getId() + " w/ TTL " + s.getTTL());
+        Session s= store.createSession(this.prefix, Integer.parseInt(this.paramAt(1)));
+        LOG.log(Level.INFO, "Created session {0} w/ TTL {1}", new Object[]{s.getId(), s.getTTL()});
         
         return new Response(true, s.getId());
     }

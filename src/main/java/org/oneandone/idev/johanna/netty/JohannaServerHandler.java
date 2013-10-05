@@ -10,6 +10,7 @@ import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.RequestFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +58,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         
         try {
             request= this.factory.createRequest(i);
+            request.setPrefix(this.prefixFor(addr.getAddress()));
             response= request.process(this.store);
         } catch (IllegalArgumentException e) {
             LOG.warning(e.toString());
@@ -64,7 +66,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         }
 
         LOG.log(Level.FINEST, "<<< {0}", response.toString());
-        ChannelFuture future= ctx.write(response.toString());
+        ChannelFuture future= ctx.writeAndFlush(response.toString());
         
         if (response.getClose()) {
             future.addListener(ChannelFutureListener.CLOSE);
@@ -82,4 +84,15 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         LOG.warning(cause.toString());
         ctx.close();
     }
+
+    private String prefixFor(InetAddress address) {
+        StringBuilder builder= new StringBuilder(32);
+        
+        for (byte b : address.getAddress()) {
+            builder.append(String.format("%02x", b));
+        }
+        
+        return builder.toString();
+    }
+    
 }

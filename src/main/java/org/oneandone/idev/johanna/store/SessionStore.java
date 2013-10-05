@@ -18,7 +18,7 @@ public class SessionStore {
     private static final Logger LOG = Logger.getLogger(SessionStore.class.getName());
     private Map<String,Session> store;
 
-    private int intervalGC= 10000;
+    private int intervalGC= 60000;
     private Thread gc;
     private final Object gcLock= new Object();
     private boolean gcStop= false;
@@ -31,8 +31,8 @@ public class SessionStore {
         return this.store.size();
     }
     
-    public Session createSession(int ttl) {
-        Session s= new Session();
+    public Session createSession(String prefix, int ttl) {
+        Session s= new Session(prefix);
         s.setTTL(ttl);
         this.store.put(s.getId(), s);
         return s;

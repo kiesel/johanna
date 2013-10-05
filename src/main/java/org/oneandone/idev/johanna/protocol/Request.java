@@ -12,9 +12,15 @@ import org.oneandone.idev.johanna.store.SessionStore;
  */
 public abstract class Request {
     private String command;
+    protected String prefix;
 
     public Request(String command) {
         this.command = command;
+        this.prefix= null;
+    }
+    
+    public void setPrefix(String s) {
+        this.prefix= s;
     }
     
     protected String paramAt(int i) {

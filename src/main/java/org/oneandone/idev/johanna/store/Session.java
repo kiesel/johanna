@@ -20,21 +20,27 @@ public class Session {
     private static final Logger LOG = Logger.getLogger(Session.class.getName());
     private static final int DEFAULT_TTL= 3600;
 
+    private String prefix;
     private UUID id;
     private int ttl;
     
     private Map<String, String> values;
     private Date expiryDate;
 
-    public Session(UUID id, int ttl) {
+    public Session(String prefix, UUID id, int ttl) {
+        this.prefix= prefix;
         this.id = id;
         this.setTTL(ttl);
         this.touch();
         this.values= new ConcurrentHashMap<String, String>();
     }
+    
+    public Session(String prefix) {
+        this(prefix, UUID.randomUUID(), DEFAULT_TTL);
+    }
 
     public Session() {
-        this(UUID.randomUUID(), DEFAULT_TTL);
+        this("", UUID.randomUUID(), DEFAULT_TTL);
     }
 
     public final void setTTL(int ttl) {
@@ -45,7 +51,7 @@ public class Session {
     }
 
     public String getId() {
-        return this.id.toString();
+        return this.prefix + this.id.toString();
     }
     
     public void putValue(String k, String v) {
