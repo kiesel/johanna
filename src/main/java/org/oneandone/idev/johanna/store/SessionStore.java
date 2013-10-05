@@ -31,7 +31,11 @@ public class SessionStore {
         return this.store.size();
     }
     
-    public Session createSession(String prefix, int ttl) {
+    public Session createSession(int ttl) {
+        return this.createSession(ttl, "");
+    }
+    
+    public Session createSession(int ttl, String prefix) {
         Session s= new Session(prefix);
         s.setTTL(ttl);
         this.store.put(s.getId(), s);
@@ -85,6 +89,7 @@ public class SessionStore {
             
             LOG.info("---> Starting garbage collection thread.");
             this.gc= new Thread(new Runnable() {
+                @SuppressWarnings("SleepWhileInLoop")
                 public void run() {
                     while (!gcStop) {
                         try {
