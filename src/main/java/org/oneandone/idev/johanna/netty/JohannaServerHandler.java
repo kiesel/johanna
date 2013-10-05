@@ -33,21 +33,23 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
+        
         InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
-        LOG.log(Level.INFO, "> New connection from {0}:{1}", new Object[]{addr.getHostString(), addr.getPort()});
+        LOG.log(Level.INFO, "> New connection from {0}", new Object[]{addr.getHostString()});
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
+        
         InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
-        LOG.log(Level.INFO, "< New connection from {0}:{1}", new Object[]{addr.getHostString(), addr.getPort()});
+        LOG.log(Level.INFO, "< Closed connection from {0}", new Object[]{addr.getHostString()});
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String i) throws Exception {
         InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
-        LOG.log(Level.FINE, ">> Received message from {0}:{1}", new Object[]{addr.getHostString(), addr.getPort()});
+        LOG.log(Level.FINE, ">> Received message from {0}", new Object[]{addr.getHostString()});
         LOG.log(Level.FINER, ">>> {0}", i);
                 
         Request request;

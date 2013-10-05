@@ -18,24 +18,23 @@ import java.util.logging.Logger;
  */
 public class Session {
     private static final Logger LOG = Logger.getLogger(Session.class.getName());
+    private static final int DEFAULT_TTL= 3600;
 
     private UUID id;
-    private Date created;
     private int ttl;
     
     private Map<String, String> values;
     private Date expiryDate;
 
-    public Session(UUID id, Date created, int ttl) {
+    public Session(UUID id, int ttl) {
         this.id = id;
-        this.created = created;
         this.setTTL(ttl);
         this.touch();
         this.values= new ConcurrentHashMap<String, String>();
     }
 
     public Session() {
-        this(UUID.randomUUID(), new Date(), 86400);
+        this(UUID.randomUUID(), DEFAULT_TTL);
     }
 
     public final void setTTL(int ttl) {
@@ -84,7 +83,11 @@ public class Session {
     }
     
     public boolean hasExpired() {
-        return this.expiryDate().before(new Date());
+        return this.hasExpired(new Date());
+    }
+    
+    public boolean hasExpired(Date ref) {
+        return this.expiryDate().before(ref);
     }
     
     public Date expiryDate() {
@@ -92,6 +95,7 @@ public class Session {
     }
 
     public boolean terminateIfExpired() {
+        LOG.log(Level.INFO, "Expiry date: {0} - expired? {1}", new Object[]{this.expiryDate.toString(), this.hasExpired()});
         if (!this.hasExpired()) return false;
         
         // Cleanup
@@ -104,4 +108,7 @@ public class Session {
         this.expiryDate= new Date(new Date().getTime() + this.getTTL());
     }
 
+    public void expire() {
+        this.expiryDate= new Date(new Date().getTime() - 1);
+    }
 }

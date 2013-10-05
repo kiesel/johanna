@@ -37,6 +37,7 @@ public class JohannahServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             LOG.info("===> Starting Johanna Server.");
+            store.startAutomaticGarbageCollectionThread();
 
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -65,6 +66,7 @@ public class JohannahServer {
             LOG.info("===> Shutting down Johanna instance.");
         } finally {
             LOG.info("---> Cleanup.");
+            store.startAutomaticGarbageCollectionThread();
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }

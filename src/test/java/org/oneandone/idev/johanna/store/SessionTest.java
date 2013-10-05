@@ -4,6 +4,7 @@
  */
 package org.oneandone.idev.johanna.store;
 
+import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -104,5 +105,43 @@ public class SessionTest {
     @Test
     public void testSetTimeout() {
         assertEquals(86400, this.cut.setTimeout(60));
+    }
+    
+    @Test
+    public void notExpired() {
+        this.cut.setTTL(1);
+        assertFalse(this.cut.hasExpired());
+    }
+    
+    @Test
+    public void hasExpired() throws Exception {
+        this.cut.setTTL(1);
+        this.cut.putValue("foo", "bar");
+        
+        assertTrue(this.cut.hasExpired(new Date(new Date().getTime() + 1000)));
+    }
+    
+    @Test
+    public void expiry_reset_by_writing_operation() throws Exception {
+        this.cut.putValue("foo", "bar");
+        Date origExp= this.cut.expiryDate();
+        Thread.sleep(1000);
+        
+        this.cut.putValue("bar", "baz");
+        Date newExp= this.cut.expiryDate();
+        
+        assertNotEquals(origExp, newExp);
+    }
+
+    @Test
+    public void expiry_untouched_by_writing_operation() throws Exception {
+        this.cut.putValue("foo", "bar");
+        Date origExp= this.cut.expiryDate();
+        Thread.sleep(1000);
+        
+        this.cut.getValue("bar");
+        Date newExp= this.cut.expiryDate();
+        
+        assertEquals(origExp, newExp);
     }
 }
