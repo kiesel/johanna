@@ -24,8 +24,8 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
         String stor = this.paramAt(2);
         String name = this.paramAt(3);
 
-        if (!"tmp".equals(stor)) {
-            return new Response(false, "BADSTOR Only tmp supported.");
+        if (!this.validStorageArea(stor)) {
+            return Response.BADSTOR;
         }
         
         return processSessionKey(store, s, name);

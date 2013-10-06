@@ -34,7 +34,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        
+
         InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
         LOG.log(Level.INFO, "> New connection from {0}", new Object[]{addr.getHostString()});
     }

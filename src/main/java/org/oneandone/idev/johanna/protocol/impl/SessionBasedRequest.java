@@ -34,4 +34,8 @@ public abstract class SessionBasedRequest extends Request {
     }
 
     protected abstract Response processSession(SessionStore store, Session s);
+
+    protected boolean validStorageArea(String stor) {
+        return "tmp".equals(stor);
+    }
 }

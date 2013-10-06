@@ -24,12 +24,17 @@ public class SessionKeysRequest extends SessionBasedRequest {
     }
 
     protected Response processSession(SessionStore store, Session s) {
-        Iterator<String> keyIterator= s.keys().iterator();
-        StringBuffer buf= new StringBuffer();
+        String stor= this.paramAt(2);
         
-        while (keyIterator.hasNext()) {
-            buf.append(keyIterator.next());
-            buf.append(" ");
+        if (!this.validStorageArea(stor)) {
+            return Response.BADSTOR;
+        }
+        Iterator<String> i= s.keys().iterator();
+        StringBuilder buf= new StringBuilder();
+        
+        while (i.hasNext()) {
+            buf.append(i.next());
+            if (i.hasNext()) buf.append(" ");
         }
         
         return new Response(true, buf.toString());

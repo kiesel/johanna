@@ -33,8 +33,8 @@ public class JohannahServer {
         LOG.info("Server startup.");
         final SessionStore store= new SessionStore();
         
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        final EventLoopGroup bossGroup = new NioEventLoopGroup();
+        final EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             LOG.info("===> Starting Johanna Server.");
             store.startAutomaticGarbageCollectionThread();
@@ -46,7 +46,7 @@ public class JohannahServer {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
                      ch.pipeline().addLast("framer", new DelimiterBasedFrameDecoder(
-                             8192, Delimiters.lineDelimiter()
+                             81920, Delimiters.lineDelimiter()
                      ));
                      ch.pipeline().addLast("decoder", new StringDecoder(Charset.forName("iso-8859-1")));
                      ch.pipeline().addLast("encoder", new StringEncoder(Charset.forName("iso-8859-1")));
@@ -54,11 +54,13 @@ public class JohannahServer {
                  }
              })
              .option(ChannelOption.SO_BACKLOG, 128)
+             .option(ChannelOption.SO_RCVBUF, 1024)
+             .option(ChannelOption.TCP_NODELAY, true)
              .childOption(ChannelOption.SO_KEEPALIVE, true);
     
             // Bind and start to accept incoming connections.
             ChannelFuture f = b.bind(port).sync();
-    
+            
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
@@ -66,7 +68,7 @@ public class JohannahServer {
             LOG.info("===> Shutting down Johanna instance.");
         } finally {
             LOG.info("---> Cleanup.");
-            store.startAutomaticGarbageCollectionThread();
+            store.stopAutomaticGarbageCollection();
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
