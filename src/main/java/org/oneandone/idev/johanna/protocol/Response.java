@@ -12,20 +12,24 @@ public class Response {
     public static final Response OK= new Response(true);
     public static final Response BADSESS= new Response(false, "BADSESS");
     public static final Response NOKEY= new Response(false, "NOKEY");
+    public static final Response BADSTOR= new Response(false, "BADSTORAGE Supported: [tmp]");
     
     private boolean success;
     private boolean close;
     private String data;
 
     public Response(boolean success) {
-        this.success= success;
-        this.close= false;
-        this.data= null;
+        this(success, null);
     }
     
     public Response(boolean success, String data) {
-        this(success);
+        this.success= success;
         this.data = data;
+        this.close= false;
+        
+        if (!this.success && this.data == null) {
+            throw new IllegalStateException("Message required for failure message.");
+        }
     }
 
     public boolean getClose() {
@@ -47,7 +51,7 @@ public class Response {
             buf.append("-");
         }
         
-        buf.append(this.data);
+        if (this.data != null) buf.append(this.data);
         buf.append("\n");
         
         return buf.toString();
