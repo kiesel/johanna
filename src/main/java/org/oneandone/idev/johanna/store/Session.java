@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class Session {
     private static final Logger LOG = Logger.getLogger(Session.class.getName());
-    private static final int DEFAULT_TTL= 3600;
+    public static final int DEFAULT_TTL= 3600;
 
     private String prefix;
     private UUID id;

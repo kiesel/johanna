@@ -29,13 +29,6 @@ public abstract class SessionBasedRequest extends Request {
             return Response.BADSESS;
         }
         
-        LOG.log(Level.INFO, "Session expired @ {0}", s.expiryDate());
-        
-        // Check for session expiry, first
-        if (s.hasExpired()) {
-            return Response.BADSESS;
-        }
-        
         // Otherwise, perform request
         return processSession(store, s);
     }

@@ -104,7 +104,7 @@ public class SessionTest {
      */
     @Test
     public void testSetTimeout() {
-        assertEquals(86400, this.cut.setTimeout(60));
+        assertEquals(Session.DEFAULT_TTL, this.cut.setTimeout(60));
     }
     
     @Test

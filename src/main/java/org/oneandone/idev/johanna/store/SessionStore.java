@@ -42,12 +42,23 @@ public class SessionStore {
         return s;
     }
     
+    protected Session session(String id) {
+        Session s= this.store.get(id);
+        
+        // Protect against delivery of expired sessions
+        if (s != null) {
+            if (s.hasExpired()) return null;
+        }
+        
+        return s;
+    }
+    
     public boolean hasSession(String id) {
-        return this.store.containsKey(id);
+        return this.session(id) != null;
     }
     
     public boolean terminateSession(String id) {
-        Session s= this.store.get(id);
+        Session s= this.session(id);
         if (null == s) {
             return false;
         }
@@ -61,7 +72,7 @@ public class SessionStore {
     }
 
     public Session getSession(String id) {
-        return this.store.get(id);
+        return this.session(id);
     }
     
     public void cleanupSessions() {
