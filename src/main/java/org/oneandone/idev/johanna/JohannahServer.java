@@ -46,7 +46,7 @@ public class JohannahServer {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
                      ch.pipeline().addLast("framer", new DelimiterBasedFrameDecoder(
-                             81920, Delimiters.lineDelimiter()
+                             1024 * 1024 * 1024, Delimiters.lineDelimiter()
                      ));
                      ch.pipeline().addLast("decoder", new StringDecoder(Charset.forName("iso-8859-1")));
                      ch.pipeline().addLast("encoder", new StringEncoder(Charset.forName("iso-8859-1")));
