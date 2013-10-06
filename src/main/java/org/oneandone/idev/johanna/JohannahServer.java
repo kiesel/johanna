@@ -54,7 +54,6 @@ public class JohannahServer {
                  }
              })
              .option(ChannelOption.SO_BACKLOG, 128)
-             .option(ChannelOption.SO_RCVBUF, 1024)
              .option(ChannelOption.TCP_NODELAY, true)
              .childOption(ChannelOption.SO_KEEPALIVE, true);
     

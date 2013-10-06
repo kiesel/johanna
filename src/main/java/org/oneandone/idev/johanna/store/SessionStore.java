@@ -36,14 +36,17 @@ public class SessionStore {
     }
     
     public Session createSession(String prefix, int ttl) {
-        Identifier id= new MD5Identifier(prefix);
-        return this.createSession(id, ttl);
+        return this.createSession(this.newIdentifier(prefix), ttl);
     }
     
     public Session createSession(Identifier id, int ttl) {
         Session s= new Session(id, ttl);
         this.store.put(s.getId(), s);
         return s;
+    }
+    
+    protected Identifier newIdentifier(String prefix) {
+        return new MD5Identifier(prefix);
     }
     
     protected Session session(String id) {
@@ -80,6 +83,8 @@ public class SessionStore {
     }
     
     public void cleanupSessions() {
+        this.dumpStats();
+        
         LOG.info("Starting session garbage collection run...");
         Iterator<String> i= this.store.keySet().iterator();
         
@@ -96,6 +101,23 @@ public class SessionStore {
         
         LOG.info("Session garbage collection completed.");
         LOG.log(Level.INFO, "Checked [{0}] / cleaned [{1}]", new Object[]{checked, cleaned});
+    }
+    
+    public void dumpStats() {
+        long memory= 0;
+        long count= 0;
+        long terminated= 0;
+        
+        Iterator<String> i= this.store.keySet().iterator();
+        while (i.hasNext()) {
+            Session s= this.store.get(i.next());
+            count++;
+            memory+= s.payloadBytesUsed();
+            
+            if (s.hasExpired()) terminated++;
+        }
+        
+        LOG.log(Level.INFO, "Stats: [{0}] sessions [{1}] expired, [{2}] bytes used", new Object[]{count, terminated, memory});
     }
     
     public void startAutomaticGarbageCollectionThread() {

@@ -5,9 +5,10 @@
 package org.oneandone.idev.johanna.store;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -74,7 +75,10 @@ public class Session {
     }
     
     public void terminate() {
-        LOG.log(Level.INFO, "Termination session {0}", this.getId());
+        LOG.log(Level.INFO, "Terminating session {0}, expired at {1}", new Object[] {
+            this.getId(), 
+            this.expiryDate()
+        });
         this.values= null;
     }
     
@@ -95,11 +99,9 @@ public class Session {
     }
 
     public boolean terminateIfExpired() {
-        LOG.log(Level.INFO, "Expiry date: {0} - expired? {1}", new Object[]{this.expiryDate.toString(), this.hasExpired()});
         if (!this.hasExpired()) return false;
         
         // Cleanup
-        LOG.log(Level.INFO, "Session {0} has expired.", this.getId());
         this.terminate();
         return true;
     }
@@ -110,5 +112,19 @@ public class Session {
 
     public void expire() {
         this.expiryDate= new Date(new Date().getTime() - 1);
+    }
+    
+    public long payloadBytesUsed() {
+        long bytes= 0;
+
+        Iterator<Entry<String, String>> i= this.values.entrySet().iterator();
+        while (i.hasNext()) {
+            Entry<String, String> entry= i.next();
+            
+            bytes += entry.getKey().length();
+            bytes += entry.getValue().length();
+        }
+        
+        return bytes;
     }
 }

@@ -36,7 +36,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         super.channelActive(ctx);
 
         InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
-        LOG.log(Level.INFO, "> New connection from {0}", new Object[]{addr.getHostString()});
+        LOG.log(Level.FINEST, "> New connection from {0}", new Object[]{addr.getHostString()});
     }
 
     @Override
@@ -44,7 +44,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         super.channelInactive(ctx);
         
         InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
-        LOG.log(Level.INFO, "< Closed connection from {0}", new Object[]{addr.getHostString()});
+        LOG.log(Level.FINEST, "< Closed connection from {0}", new Object[]{addr.getHostString()});
     }
 
     @Override
@@ -65,7 +65,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
             response= new Response(false, "SYNTAX");
         }
 
-        LOG.log(Level.FINEST, "<<< {0}", response.toString());
+        LOG.log(Level.FINER, "<<< {0}", response.toString());
         ChannelFuture future= ctx.writeAndFlush(response.toString());
         
         if (response.getClose()) {
