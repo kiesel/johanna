@@ -32,12 +32,16 @@ public class SessionStore {
     }
     
     public Session createSession(int ttl) {
-        return this.createSession(ttl, "");
+        return this.createSession("", ttl);
     }
     
-    public Session createSession(int ttl, String prefix) {
-        Session s= new Session(prefix);
-        s.setTTL(ttl);
+    public Session createSession(String prefix, int ttl) {
+        Identifier id= new MD5Identifier(prefix);
+        return this.createSession(id, ttl);
+    }
+    
+    public Session createSession(Identifier id, int ttl) {
+        Session s= new Session(id, ttl);
         this.store.put(s.getId(), s);
         return s;
     }

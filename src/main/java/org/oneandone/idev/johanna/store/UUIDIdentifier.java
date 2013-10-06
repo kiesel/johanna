@@ -13,6 +13,10 @@ public class UUIDIdentifier extends Identifier {
         super(prefix);
         this.id= UUID.randomUUID();
     }
+
+    public UUIDIdentifier() {
+        this("");
+    }
     
     @Override
     protected String uniqid() {

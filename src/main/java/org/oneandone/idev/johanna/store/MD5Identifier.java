@@ -27,6 +27,10 @@ public class MD5Identifier extends Identifier {
             Logger.getLogger(MD5Identifier.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    MD5Identifier() {
+        this("");
+    }
     
     private void createUniqid() throws NoSuchAlgorithmException {
         MessageDigest digest= MessageDigest.getInstance("md5");
