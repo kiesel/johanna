@@ -4,10 +4,7 @@
  */
 package org.oneandone.idev.johanna.store;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -21,21 +18,9 @@ public class SessionStoreTest {
     public SessionStoreTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
     @Before
     public void setUp() {
         this.cut= new SessionStore();
-    }
-    
-    @After
-    public void tearDown() {
     }
 
     /**

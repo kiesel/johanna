@@ -4,11 +4,11 @@
  */
 package org.oneandone.idev.johanna.store;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
-import org.junit.After;
-import org.junit.AfterClass;
+import java.util.GregorianCalendar;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -22,24 +22,12 @@ public class SessionTest {
     public SessionTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
     @Before
     public void setUp() {
         this.cut= new Session(new MD5Identifier());
         this.cut.putValue("k", "v");
     }
     
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of getId method, of class Session.
      */
@@ -118,7 +106,19 @@ public class SessionTest {
         this.cut.setTTL(1);
         this.cut.putValue("foo", "bar");
         
-        assertTrue(this.cut.hasExpired(new Date(new Date().getTime() + 1000)));
+        assertTrue(this.cut.hasExpired(new Date(new Date().getTime() + 2000)));
+    }
+    
+    @Test
+    public void expires_next_day() throws ParseException {
+        Session s= new Session(new MD5Identifier(""), 86400);
+        s.putValue("foo", "bar");
+
+        Calendar today= new GregorianCalendar();
+        Calendar actual= new GregorianCalendar();
+        actual.setTime(s.expiryDate());
+
+        assertNotEquals(today.get(Calendar.DAY_OF_YEAR), actual.get(Calendar.DAY_OF_YEAR));
     }
     
     @Test

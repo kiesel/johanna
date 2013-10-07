@@ -107,7 +107,7 @@ public class Session {
     }
 
     private void touch() {
-        this.expiryDate= new Date(new Date().getTime() + this.getTTL());
+        this.expiryDate= new Date(new Date().getTime() + (this.getTTL() * 1000));
     }
 
     public void expire() {
