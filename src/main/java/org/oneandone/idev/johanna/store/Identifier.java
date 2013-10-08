@@ -4,15 +4,17 @@
  */
 package org.oneandone.idev.johanna.store;
 
+import java.util.Objects;
+
 /**
  *
  * @author kiesel
  */
 public abstract class Identifier {
-    private String prefix;
+    private final String prefix;
     
     public Identifier(String prefix) {
-        this.prefix= prefix;
+        this.prefix= Objects.requireNonNull(prefix);
     }
     
     protected String prefix() {

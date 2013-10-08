@@ -10,6 +10,12 @@ is written in Java.
 $ java org.oneandone.idev.johanna.JohannahServer [<port>]
 ```
 
+or - if you run the uber-jar:
+
+```sh
+$ java -jar /path/to/johanna-jar.jar [<port>]
+```
+
 <port> defaults to 2001.
 
 ## Implemented protocol commands

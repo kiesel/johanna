@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -28,7 +29,7 @@ public class Session {
     private Date expiryDate;
 
     public Session(Identifier id, int ttl) {
-        this.id = id;
+        this.id = Objects.requireNonNull(id);
         this.setTTL(ttl);
         this.touch();
         this.values= new ConcurrentHashMap<String, String>();

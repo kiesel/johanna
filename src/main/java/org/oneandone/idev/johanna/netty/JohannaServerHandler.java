@@ -48,16 +48,15 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String i) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, String in) throws Exception {
         InetSocketAddress addr= (InetSocketAddress) ctx.channel().remoteAddress();
-        LOG.log(Level.FINE, ">> Received message from {0}", new Object[]{addr.getHostString()});
-        LOG.log(Level.FINER, ">>> {0}", i);
+        LOG.log(Level.FINER, ">>> [{0}] {1}", new Object[]{ addr.getHostString(), in });
                 
         Request request;
         Response response;
         
         try {
-            request= this.factory.createRequest(i);
+            request= this.factory.createRequest(in);
             request.setPrefix(this.prefixFor(addr.getAddress()));
             response= request.process(this.store);
         } catch (IllegalArgumentException e) {
@@ -65,7 +64,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
             response= new Response(false, "SYNTAX");
         }
 
-        LOG.log(Level.FINER, "<<< {0}", response.toString());
+        LOG.log(Level.FINER, "<<< [{0}] {1}", new Object[] { addr.getHostString(), response.toString() });
         ChannelFuture future= ctx.writeAndFlush(response.toString());
         
         if (response.getClose()) {
@@ -85,8 +84,8 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
         ctx.close();
     }
 
-    private String prefixFor(InetAddress address) {
-        StringBuilder builder= new StringBuilder(32);
+    private String prefixFor(final InetAddress address) {
+        final StringBuilder builder= new StringBuilder(32);
         
         for (byte b : address.getAddress()) {
             builder.append(String.format("%02x", b));
