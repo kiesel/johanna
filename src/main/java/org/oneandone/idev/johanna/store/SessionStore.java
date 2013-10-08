@@ -6,6 +6,8 @@ package org.oneandone.idev.johanna.store;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,9 +21,7 @@ public class SessionStore {
     private Map<String,Session> store;
 
     private int intervalGC= 60000;
-    private Thread gc;
-    private final Object gcLock= new Object();
-    private boolean gcStop= false;
+    private Timer gc;
 
     public SessionStore() {
         this.store = new ConcurrentHashMap<String, Session>();
@@ -121,45 +121,23 @@ public class SessionStore {
     }
     
     public void startAutomaticGarbageCollectionThread() {
-        synchronized(this.gcLock) {
-            if (null != this.gc) return;
-            
-            LOG.info("---> Starting garbage collection thread.");
-            this.gc= new Thread(new Runnable() {
-                @SuppressWarnings("SleepWhileInLoop")
-                public void run() {
-                    while (!gcStop) {
-                        try {
-                            Thread.sleep(intervalGC);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(SessionStore.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+        if (null != this.gc) return;
 
-                        cleanupSessions();
-                    }
-                }
-            });
-            this.gc.start();
-        }
+        LOG.info("---> Scheduled garbage collection run.");
+        this.gc= new Timer("SessionStoreGC", true);
+        this.gc.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                cleanupSessions();
+            }
+        }, intervalGC, intervalGC);
     }
     
     public void stopAutomaticGarbageCollection() throws InterruptedException {
-        synchronized(this.gcLock) {
-            if (this.gc == null) return;
+        if (this.gc == null) return;
 
-            LOG.info("---> Stopping garbage collection thread.");
-            try {
-                this.gcStop= true;
-                this.gc.join(intervalGC);
-                this.gc= null;
-            } catch (InterruptedException ex) {
-                Logger.getLogger(SessionStore.class.getName()).log(Level.SEVERE, null, ex);
-                throw ex;
-            } finally {
-                this.gcStop= false;
-            }
-            
-            LOG.info("---> Stopped garbage collection thread.");
-        }
+        LOG.info("---> Unscheduling garbage collection run.");
+        this.gc.cancel();
     }
 }
