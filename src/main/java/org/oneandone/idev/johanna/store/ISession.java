@@ -15,8 +15,6 @@ public interface ISession {
 
     void expire();
 
-    Date expiryDate();
-
     String getId();
 
     int getTTL();

@@ -24,6 +24,7 @@ public class Session extends AbstractSession {
 
     public Session(Identifier id, int ttl) {
         super(id, ttl);
+        this.touch();
         this.values= new ConcurrentHashMap<>();
     }
     
@@ -83,11 +84,10 @@ public class Session extends AbstractSession {
     }
 
     @Override
-    protected void touch() {
+    protected final void touch() {
         this.expiryDate = new Date(new Date().getTime() + (this.getTTL() * 1000));
     }
     
-    @Override
     public Date expiryDate() {
         return this.expiryDate;
     }

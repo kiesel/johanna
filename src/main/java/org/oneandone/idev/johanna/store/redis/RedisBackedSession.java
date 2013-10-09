@@ -5,7 +5,6 @@
 package org.oneandone.idev.johanna.store.redis;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import org.oneandone.idev.johanna.store.AbstractSession;
@@ -16,6 +15,7 @@ import redis.clients.jedis.JedisPool;
 
 public class RedisBackedSession extends AbstractSession {
     public final static String REDIS_PREFIX= "sess:";
+    private String REDIS_META_KEY= "meta";
     
     private JedisPool pool;
     
@@ -23,36 +23,71 @@ public class RedisBackedSession extends AbstractSession {
         return REDIS_PREFIX + this.getId();
     }
     
+    private Jedis jedis() {
+        Jedis j= this.pool.getResource();
+        if (!j.isConnected()) j.connect();
+        return j;
+    }
+    
     @Override
     public void putValue(String k, String v) {
-        this.pool.getResource().hset(this.key(), k, v);
+        Jedis j= this.jedis();
+        try {
+            j.hset(this.key(), k, v);
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 
     @Override
     public String getValue(String k) {
-        return this.pool.getResource().hget(this.key(), k);
+        Jedis j= this.jedis();
+        try {
+            return this.pool.getResource().hget(this.key(), k);
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 
     @Override
     public boolean removeValue(String k) {
-        return (1 == this.pool.getResource().hdel(this.key(), k));
+        Jedis j= this.jedis();
+        try {
+            return (1 == this.pool.getResource().hdel(this.key(), k));
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 
     @Override
     public boolean hasValue(String k) {
-        return this.redis().hexists(this.key(), k);
+        Jedis j= this.jedis();
+        try {
+            return this.redis().hexists(this.key(), k);
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 
     @Override
     public Set<String> keys() {
-        return this.redis().hkeys(this.key());
+        Jedis j= this.jedis();
+        try {
+            return this.redis().hkeys(this.key());
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 
     @Override
     protected void terminate() {
         LOG.log(Level.INFO, "Terminating session {0}", this.getId());
-        
-        this.redis().del(this.key());
+        Jedis j= this.jedis();
+        try {
+            this.redis().del(this.key());
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 
     public RedisBackedSession(Identifier id, JedisPool pool) {
@@ -66,7 +101,7 @@ public class RedisBackedSession extends AbstractSession {
 
     @Override
     public long payloadBytesUsed() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     private Jedis redis() {
@@ -74,27 +109,43 @@ public class RedisBackedSession extends AbstractSession {
     }
 
     public void register() {
-        Jedis j= this.pool.getResource();
-        j.hset(this.key(), "meta:session", "0");
+        Jedis j= this.jedis();
+        try {
+            j.hset(this.key(), "meta:session", "0");
+        } finally {
+            this.pool.returnResource(j);
+        }
+
         this.touch();
     }
+    
+    protected final void touch(Jedis j) {
+        j.hset(this.key(), REDIS_META_KEY, "0");
+        j.expire(this.key(), this.getTTL());
+    }
 
+    @Override
     protected final void touch() {
-        this.pool.getResource().expire(this.key(), this.getTTL());
+        Jedis j= this.jedis();
+        try {
+            this.touch(j);
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 
     @Override
     public void expire() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Date expiryDate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.terminate();
     }
 
     @Override
     public boolean hasExpired() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Jedis j= this.jedis();
+        try {
+            return j.hexists(this.key(), REDIS_META_KEY);
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 }

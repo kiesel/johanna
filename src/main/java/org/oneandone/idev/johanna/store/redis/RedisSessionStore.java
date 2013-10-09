@@ -97,6 +97,7 @@ public class RedisSessionStore implements SessionStore {
 
             @Override
             public void run() {
+                dumpStats();
                 cleanupSessions();
             }
         }, this.intervalGC, this.intervalGC);

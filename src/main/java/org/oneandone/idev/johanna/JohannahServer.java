@@ -23,6 +23,7 @@ import org.oneandone.idev.johanna.store.SessionStore;
 import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
 import org.oneandone.idev.johanna.store.redis.RedisSessionStore;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
     
 /**
  * Discards any incoming data.
@@ -47,7 +48,7 @@ public class JohannahServer extends Command {
             }
                 
             case "redis": {
-                JedisPool pool= new JedisPool("127.0.0.1");
+                JedisPool pool= new JedisPool(new JedisPoolConfig(), "127.0.0.1");
                 this.store= new RedisSessionStore(pool);
                 break;
             }
