@@ -4,6 +4,7 @@
  */
 package org.oneandone.idev.johanna.store;
 
+import org.oneandone.idev.johanna.store.memory.Session;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;

@@ -5,9 +5,8 @@
 package org.oneandone.idev.johanna.protocol.impl;
 
 import java.util.logging.Logger;
-import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.Response;
-import org.oneandone.idev.johanna.store.Session;
+import org.oneandone.idev.johanna.store.AbstractSession;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
@@ -22,7 +21,7 @@ public class SessionSetTimeoutRequest extends SessionBasedRequest {
     }
 
     @Override
-    public Response processSession(SessionStore store, Session s) {
+    protected Response processSession(SessionStore store, AbstractSession s) {
         s.setTTL(Integer.parseInt(this.paramAt(2)));
         return Response.OK;
     }

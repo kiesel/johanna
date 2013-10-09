@@ -4,6 +4,8 @@
  */
 package org.oneandone.idev.johanna.store;
 
+import org.oneandone.idev.johanna.store.memory.Session;
+import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -12,19 +14,19 @@ import static org.junit.Assert.*;
  *
  * @author kiesel
  */
-public class SessionStoreTest {
-    private SessionStore cut;
+public class MemorySessionStoreTest {
+    private MemorySessionStore cut;
     
-    public SessionStoreTest() {
+    public MemorySessionStoreTest() {
     }
     
     @Before
     public void setUp() {
-        this.cut= new SessionStore();
+        this.cut= new MemorySessionStore();
     }
 
     /**
-     * Test of size method, of class SessionStore.
+     * Test of size method, of class MemorySessionStore.
      */
     @Test
     public void initialSize() {
@@ -32,7 +34,7 @@ public class SessionStoreTest {
     }
 
     /**
-     * Test of createSession method, of class SessionStore.
+     * Test of createSession method, of class MemorySessionStore.
      */
     @Test
     public void testCreateSession() {
@@ -41,7 +43,7 @@ public class SessionStoreTest {
     }
 
     /**
-     * Test of terminateSession method, of class SessionStore.
+     * Test of terminateSession method, of class MemorySessionStore.
      */
     @Test
     public void testTerminateSession() {

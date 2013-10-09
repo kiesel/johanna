@@ -4,9 +4,8 @@
  */
 package org.oneandone.idev.johanna.protocol.impl;
 
-import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.Response;
-import org.oneandone.idev.johanna.store.Session;
+import org.oneandone.idev.johanna.store.AbstractSession;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
@@ -20,7 +19,7 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
     }
 
     @Override
-    protected Response processSession(SessionStore store, Session s) {
+    protected Response processSession(SessionStore store, AbstractSession s) {
         String stor = this.paramAt(2);
         String name = this.paramAt(3);
 
@@ -31,5 +30,5 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
         return processSessionKey(store, s, name);
     }
 
-    abstract protected Response processSessionKey(SessionStore store, Session s, String name);
+    abstract protected Response processSessionKey(SessionStore store, AbstractSession s, String name);
 }

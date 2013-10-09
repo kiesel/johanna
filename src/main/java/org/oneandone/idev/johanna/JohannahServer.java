@@ -13,31 +13,68 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.xp_framework.jcli.cmd.Arg;
+import net.xp_framework.jcli.cmd.Command;
+import net.xp_framework.jcli.cmd.Default;
 import org.oneandone.idev.johanna.netty.JohannaServerHandler;
 import org.oneandone.idev.johanna.store.SessionStore;
+import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
+import org.oneandone.idev.johanna.store.redis.RedisSessionStore;
+import redis.clients.jedis.JedisPool;
     
 /**
  * Discards any incoming data.
  */
-public class JohannahServer {
+public class JohannahServer extends Command {
     private static final Logger LOG = Logger.getLogger(JohannahServer.class.getName());
-    
+
     private int port;
+    SessionStore store;
     
-    public JohannahServer(int port) {
-        this.port = port;
+    @Arg
+    public void setPort(@Default("2001") String port) {
+        this.port = Integer.parseInt(port);
     }
     
-    public void run() throws Exception {
+    @Arg(name= "backend", option= 'b')
+    public void setSessionBackend(@Default("memory") String backend) {
+        switch (backend) {
+            case "memory": {
+                this.store= new MemorySessionStore();
+                break;
+            }
+                
+            case "redis": {
+                JedisPool pool= new JedisPool("127.0.0.1");
+                this.store= new RedisSessionStore(pool);
+                break;
+            }
+                
+            default: {
+                throw new IllegalArgumentException("Backend must be one of 'memory' or 'redis'");
+            }
+        }
+    }
+    
+    @Override
+    public void run() {
+        try {
+            this.runInternal();
+        } catch (Exception ex) {
+            Logger.getLogger(JohannahServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void runInternal() throws Exception {
         LOG.info("Server startup.");
-        final SessionStore store= new SessionStore();
         
         final EventLoopGroup bossGroup = new NioEventLoopGroup();
         final EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             LOG.info("===> Starting Johanna Server.");
-            store.startAutomaticGarbageCollectionThread();
+            store.startAutomaticGarbageCollection();
 
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -71,15 +108,5 @@ public class JohannahServer {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
-    }
-    
-    public static void main(String[] args) throws Exception {
-        int port;
-        if (args.length > 0) {
-            port = Integer.parseInt(args[0]);
-        } else {
-            port = 2001;
-        }
-        new JohannahServer(port).run();
     }
 }

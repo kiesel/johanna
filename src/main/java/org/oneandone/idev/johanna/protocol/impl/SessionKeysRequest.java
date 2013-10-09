@@ -5,11 +5,9 @@
 package org.oneandone.idev.johanna.protocol.impl;
 
 import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Logger;
-import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.Response;
-import org.oneandone.idev.johanna.store.Session;
+import org.oneandone.idev.johanna.store.AbstractSession;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
@@ -23,7 +21,7 @@ public class SessionKeysRequest extends SessionBasedRequest {
         super(command);
     }
 
-    protected Response processSession(SessionStore store, Session s) {
+    protected Response processSession(SessionStore store, AbstractSession s) {
         String stor= this.paramAt(2);
         
         if (!this.validStorageArea(stor)) {

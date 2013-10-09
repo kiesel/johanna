@@ -5,9 +5,8 @@
 package org.oneandone.idev.johanna.protocol.impl;
 
 import java.util.logging.Logger;
-import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.Response;
-import org.oneandone.idev.johanna.store.Session;
+import org.oneandone.idev.johanna.store.AbstractSession;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
@@ -22,7 +21,7 @@ public class VarDeleteRequest extends SessionKeyBasedRequest {
     }
 
     @Override
-    public Response processSessionKey(SessionStore store, Session s, String name) {
+    protected Response processSessionKey(SessionStore store, AbstractSession s, String name) {
         boolean removeValue = s.removeValue(name);
         if (!removeValue) return Response.NOKEY;
         return Response.OK;
