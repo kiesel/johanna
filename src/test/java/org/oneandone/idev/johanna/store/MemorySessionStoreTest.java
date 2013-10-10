@@ -38,7 +38,7 @@ public class MemorySessionStoreTest {
      */
     @Test
     public void testCreateSession() {
-        Session s= this.cut.createSession(10);
+        AbstractSession s= this.cut.createSession(10);
         assertTrue(this.cut.hasSession(s.getId()));
     }
 
@@ -47,7 +47,7 @@ public class MemorySessionStoreTest {
      */
     @Test
     public void testTerminateSession() {
-        Session s= this.cut.createSession(10);
+        AbstractSession s= this.cut.createSession(10);
         this.cut.terminateSession(s.getId());
         assertFalse(this.cut.hasSession(s.getId()));
     }

@@ -4,7 +4,7 @@
  */
 package org.oneandone.idev.johanna.store.redis;
 
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import org.oneandone.idev.johanna.store.AbstractSession;
@@ -14,8 +14,9 @@ import redis.clients.jedis.JedisPool;
 
 
 public class RedisBackedSession extends AbstractSession {
-    public final static String REDIS_PREFIX= "sess:";
-    private String REDIS_META_KEY= "meta";
+    public final static String REDIS_PREFIX= "s:";
+    private final static String REDIS_KEY_PREFIX= "v:";
+    private final static String REDIS_META_KEY= "ttl";
     
     private JedisPool pool;
     
@@ -24,16 +25,14 @@ public class RedisBackedSession extends AbstractSession {
     }
     
     private Jedis jedis() {
-        Jedis j= this.pool.getResource();
-        if (!j.isConnected()) j.connect();
-        return j;
+        return this.pool.getResource();
     }
     
     @Override
     public void putValue(String k, String v) {
         Jedis j= this.jedis();
         try {
-            j.hset(this.key(), k, v);
+            j.hset(this.key(), this.marshal(k), v);
         } finally {
             this.pool.returnResource(j);
         }
@@ -43,7 +42,7 @@ public class RedisBackedSession extends AbstractSession {
     public String getValue(String k) {
         Jedis j= this.jedis();
         try {
-            return this.pool.getResource().hget(this.key(), k);
+            return this.pool.getResource().hget(this.key(), this.marshal(k));
         } finally {
             this.pool.returnResource(j);
         }
@@ -53,7 +52,7 @@ public class RedisBackedSession extends AbstractSession {
     public boolean removeValue(String k) {
         Jedis j= this.jedis();
         try {
-            return (1 == this.pool.getResource().hdel(this.key(), k));
+            return (1 == this.pool.getResource().hdel(this.key(), this.marshal(k)));
         } finally {
             this.pool.returnResource(j);
         }
@@ -63,7 +62,7 @@ public class RedisBackedSession extends AbstractSession {
     public boolean hasValue(String k) {
         Jedis j= this.jedis();
         try {
-            return this.redis().hexists(this.key(), k);
+            return this.redis().hexists(this.key(), this.marshal(k));
         } finally {
             this.pool.returnResource(j);
         }
@@ -71,12 +70,20 @@ public class RedisBackedSession extends AbstractSession {
 
     @Override
     public Set<String> keys() {
+        Set<String> out, set;
         Jedis j= this.jedis();
         try {
-            return this.redis().hkeys(this.key());
+            set= this.redis().hkeys(this.key());
         } finally {
             this.pool.returnResource(j);
         }
+        out= new HashSet(set.size());
+        for (String s : set) {
+            if (REDIS_META_KEY.equals(s)) continue;
+            out.add(this.unmarshal(s));
+        }
+        
+        return out;
     }
 
     @Override
@@ -109,18 +116,11 @@ public class RedisBackedSession extends AbstractSession {
     }
 
     public void register() {
-        Jedis j= this.jedis();
-        try {
-            j.hset(this.key(), "meta:session", "0");
-        } finally {
-            this.pool.returnResource(j);
-        }
-
         this.touch();
     }
     
     protected final void touch(Jedis j) {
-        j.hset(this.key(), REDIS_META_KEY, "0");
+        j.hset(this.key(), REDIS_META_KEY, Integer.toString(this.getTTL()));
         j.expire(this.key(), this.getTTL());
     }
 
@@ -143,9 +143,21 @@ public class RedisBackedSession extends AbstractSession {
     public boolean hasExpired() {
         Jedis j= this.jedis();
         try {
-            return j.hexists(this.key(), REDIS_META_KEY);
+            return !j.hexists(this.key(), REDIS_META_KEY);
         } finally {
             this.pool.returnResource(j);
         }
+    }
+
+    private String marshal(String k) {
+        return REDIS_KEY_PREFIX + k;
+    }
+
+    private String unmarshal(String s) {
+        if (!s.startsWith(REDIS_KEY_PREFIX)) {
+            LOG.log(Level.WARNING, "Invalid key name: \"{0}\"", s);
+            throw new IllegalArgumentException("Invalid key name, expected start with prefix.");
+        }
+        return s.substring(2);
     }
 }
