@@ -2,12 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.oneandone.idev.johanna.store;
+package org.oneandone.idev.johanna.store.id;
 
+import org.oneandone.idev.johanna.store.id.Identifier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Objects;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
@@ -17,7 +19,7 @@ import javax.xml.bind.DatatypeConverter;
  * @author kiesel
  */
 public class MD5Identifier extends Identifier {
-    private static SecureRandom random;
+    private static Random random;
 
     private byte[] id;
 
@@ -46,8 +48,11 @@ public class MD5Identifier extends Identifier {
     }
 
     private void createUniqid() throws NoSuchAlgorithmException {
+        byte[] b32 = new byte[32];
+        random.nextBytes(b32);
+        
         MessageDigest digest= MessageDigest.getInstance("md5");
-        this.id= digest.digest(new Integer(random.nextInt()).toString().getBytes());
+        this.id= digest.digest(b32);
     }
 
     @Override
@@ -64,6 +69,6 @@ public class MD5Identifier extends Identifier {
         if (null != random) return;
         
         // Length operation
-        random= SecureRandom.getInstance("SHA1PRNG");
+        random= new Random(0x80);
     }
 }

@@ -11,9 +11,9 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oneandone.idev.johanna.store.AbstractSession;
-import org.oneandone.idev.johanna.store.Identifier;
-import org.oneandone.idev.johanna.store.MD5Identifier;
+import org.oneandone.idev.johanna.store.id.Identifier;
 import org.oneandone.idev.johanna.store.SessionStore;
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 import redis.clients.jedis.JedisPool;
 
 /**
@@ -23,11 +23,13 @@ import redis.clients.jedis.JedisPool;
 public class RedisSessionStore implements SessionStore {
     private static final Logger LOG = Logger.getLogger(RedisSessionStore.class.getName());
     private JedisPool pool;
+    private IdentifierFactory idFactory;
 
     private int intervalGC= 60000;
     private Timer gc;
 
-    public RedisSessionStore(JedisPool pool) {
+    public RedisSessionStore(IdentifierFactory factory, JedisPool pool) {
+        this.setIdentifierFactory(factory);
         this.pool= Objects.requireNonNull(pool);
     }
 
@@ -38,7 +40,7 @@ public class RedisSessionStore implements SessionStore {
 
     @Override
     public AbstractSession createSession(String prefix, int ttl) {
-        return this.createSession(new MD5Identifier(prefix), ttl);
+        return this.createSession(this.idFactory.newIdentifier(prefix), ttl);
     }
 
     @Override
@@ -120,14 +122,15 @@ public class RedisSessionStore implements SessionStore {
         return true;
     }
 
-    private Identifier existingIdentifier(String id) {
-        return MD5Identifier.forId(id);
-    }
-
     private RedisBackedSession session(String id) {
-        RedisBackedSession s= new RedisBackedSession(this.existingIdentifier(id), this.pool);
+        RedisBackedSession s= new RedisBackedSession(this.idFactory.fromString(id), this.pool);
         if (s.hasExpired()) return null;
         
         return s;
+    }
+
+    @Override
+    public final void setIdentifierFactory(IdentifierFactory f) {
+        this.idFactory= Objects.requireNonNull(f);
     }
 }

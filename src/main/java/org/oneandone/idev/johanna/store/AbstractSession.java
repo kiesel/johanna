@@ -4,8 +4,10 @@
  */
 package org.oneandone.idev.johanna.store;
 
+import org.oneandone.idev.johanna.store.id.Identifier;
 import java.util.Objects;
 import java.util.logging.Logger;
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 
 /**
  *

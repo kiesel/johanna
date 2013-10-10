@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 import org.oneandone.idev.johanna.protocol.Request;
 import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.AbstractSession;
-import org.oneandone.idev.johanna.store.Identifier;
-import org.oneandone.idev.johanna.store.MD5Identifier;
 import org.oneandone.idev.johanna.store.SessionStore;
 
 /**
@@ -26,9 +24,7 @@ public class SessionCreateRequest extends Request {
 
     @Override
     public Response process(SessionStore store) {
-        Identifier id= new MD5Identifier(this.prefix);
-        
-        AbstractSession s= store.createSession(id, Integer.parseInt(this.paramAt(1)));
+        AbstractSession s= store.createSession(this.prefix, Integer.parseInt(this.paramAt(1)));
         LOG.log(Level.INFO, "Created session {0} w/ TTL {1}", new Object[]{s.getId(), s.getTTL()});
         
         return new Response(true, s.getId());

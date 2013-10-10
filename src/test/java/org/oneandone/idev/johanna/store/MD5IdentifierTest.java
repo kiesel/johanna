@@ -4,6 +4,7 @@
  */
 package org.oneandone.idev.johanna.store;
 
+import org.oneandone.idev.johanna.store.id.MD5Identifier;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

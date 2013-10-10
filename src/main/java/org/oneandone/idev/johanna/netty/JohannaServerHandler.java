@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.SessionStore;
-import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
 
 /**
  *

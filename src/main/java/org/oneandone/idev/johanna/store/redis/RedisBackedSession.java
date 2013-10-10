@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import org.oneandone.idev.johanna.store.AbstractSession;
-import org.oneandone.idev.johanna.store.Identifier;
+import org.oneandone.idev.johanna.store.id.Identifier;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 

@@ -20,10 +20,12 @@ import net.xp_framework.jcli.cmd.Command;
 import net.xp_framework.jcli.cmd.Default;
 import org.oneandone.idev.johanna.netty.JohannaServerHandler;
 import org.oneandone.idev.johanna.store.SessionStore;
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
 import org.oneandone.idev.johanna.store.redis.RedisSessionStore;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+    
     
 /**
  * Discards any incoming data.
@@ -33,23 +35,38 @@ public class JohannahServer extends Command {
 
     private int port;
     SessionStore store;
+    private String host;
+    private IdentifierFactory identifierFactory;
     
     @Arg
     public void setPort(@Default("2001") String port) {
         this.port = Integer.parseInt(port);
     }
     
+    @Arg(name= "host", option= 'h')
+    public void setHost(@Default("127.0.0.1") String host) {
+        this.host= host;
+    }
+    
+    @Arg(name= "ids", option= 'i')
+    public void setIdentityMode(@Default("md5") String id) {
+        this.identifierFactory= IdentifierFactory.valueOf(id.toUpperCase());
+    }
+    
     @Arg(name= "backend", option= 'b')
     public void setSessionBackend(@Default("memory") String backend) {
         switch (backend) {
             case "memory": {
-                this.store= new MemorySessionStore();
+                LOG.info("Using \"memory\" backend.");
+                this.store= new MemorySessionStore(this.identifierFactory);
                 break;
             }
                 
             case "redis": {
-                JedisPool pool= new JedisPool(new JedisPoolConfig(), "127.0.0.1");
-                this.store= new RedisSessionStore(pool);
+                JedisPool pool= new JedisPool(new JedisPoolConfig(), this.host);
+                this.store= new RedisSessionStore(this.identifierFactory, pool);
+
+                LOG.log(Level.INFO, "Using \"redis\" backend: {0}", pool);
                 break;
             }
                 

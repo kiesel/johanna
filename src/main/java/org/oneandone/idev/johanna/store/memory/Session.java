@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import org.oneandone.idev.johanna.store.AbstractSession;
-import org.oneandone.idev.johanna.store.Identifier;
+import org.oneandone.idev.johanna.store.id.Identifier;
 
 /**
  *

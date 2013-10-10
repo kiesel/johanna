@@ -6,15 +6,16 @@ package org.oneandone.idev.johanna.store.memory;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oneandone.idev.johanna.store.AbstractSession;
-import org.oneandone.idev.johanna.store.Identifier;
-import org.oneandone.idev.johanna.store.MD5Identifier;
+import org.oneandone.idev.johanna.store.id.Identifier;
 import org.oneandone.idev.johanna.store.SessionStore;
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 
 /**
  *
@@ -23,12 +24,14 @@ import org.oneandone.idev.johanna.store.SessionStore;
 public class MemorySessionStore implements SessionStore {
     private static final Logger LOG = Logger.getLogger(MemorySessionStore.class.getName());
     private Map<String, AbstractSession> store;
+    private IdentifierFactory idFactory;
 
     private int intervalGC= 60000;
     private Timer gc;
 
-    public MemorySessionStore() {
-        this.store = new ConcurrentHashMap<String, AbstractSession>();
+    public MemorySessionStore(IdentifierFactory f) {
+        this.setIdentifierFactory(f);
+        this.store = new ConcurrentHashMap<>();
     }
     
     @Override
@@ -43,7 +46,7 @@ public class MemorySessionStore implements SessionStore {
     
     @Override
     public AbstractSession createSession(String prefix, int ttl) {
-        return this.createSession(this.newIdentifier(prefix), ttl);
+        return this.createSession(this.idFactory.newIdentifier(prefix), ttl);
     }
     
     @Override
@@ -51,10 +54,6 @@ public class MemorySessionStore implements SessionStore {
         AbstractSession s= new Session(id, ttl);
         this.store.put(s.getId(), s);
         return s;
-    }
-    
-    protected Identifier newIdentifier(String prefix) {
-        return new MD5Identifier(prefix);
     }
     
     protected AbstractSession session(String id) {
@@ -154,5 +153,10 @@ public class MemorySessionStore implements SessionStore {
 
         LOG.info("---> Unscheduling garbage collection run.");
         this.gc.cancel();
+    }
+
+    @Override
+    public final void setIdentifierFactory(IdentifierFactory f) {
+        this.idFactory= Objects.requireNonNull(f);
     }
 }
