@@ -4,11 +4,11 @@
  */
 package org.oneandone.idev.johanna.store;
 
-import org.oneandone.idev.johanna.store.memory.Session;
 import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 
 /**
  *
@@ -22,7 +22,7 @@ public class MemorySessionStoreTest {
     
     @Before
     public void setUp() {
-        this.cut= new MemorySessionStore();
+        this.cut= new MemorySessionStore(IdentifierFactory.MD5);
     }
 
     /**

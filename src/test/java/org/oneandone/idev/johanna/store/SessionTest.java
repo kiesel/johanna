@@ -26,7 +26,7 @@ public class SessionTest {
     
     @Before
     public void setUp() {
-        this.cut= new Session(new MD5Identifier());
+        this.cut= new Session(new MD5Identifier(""));
         this.cut.putValue("k", "v");
     }
     
@@ -35,7 +35,7 @@ public class SessionTest {
      */
     @Test
     public void testGetId() {
-        Session other= new Session(new MD5Identifier());
+        Session other= new Session(new MD5Identifier(""));
         assertNotEquals(this.cut.getId(), other.getId());
     }
 

@@ -13,6 +13,7 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import java.nio.charset.Charset;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.xp_framework.jcli.cmd.Arg;
@@ -48,9 +49,22 @@ public class JohannahServer extends Command {
         this.host= host;
     }
     
-    @Arg(name= "ids", option= 'i')
+    @Arg(name= "identifier", option= 'i')
     public void setIdentityMode(@Default("md5") String id) {
         this.identifierFactory= IdentifierFactory.valueOf(id.toUpperCase());
+        LOG.log(Level.INFO, "Using IdentifierFactory {0}", this.identifierFactory);
+    }
+    
+    @Arg(name= "debug", option= 'd')
+    public void setDebug(@Default("false") String debug) {
+        if ("".equals(debug)) {
+            LOG.info("Enabling debug mode logging.");
+            Logger log= Logger.getLogger("");
+            for (Handler h : log.getHandlers()) {
+                h.setLevel(Level.ALL);
+            }
+            Logger.getLogger("org.oneandone.idev.johanna").setLevel(Level.ALL);
+        }
     }
     
     @Arg(name= "backend", option= 'b')
@@ -66,7 +80,7 @@ public class JohannahServer extends Command {
                 JedisPool pool= new JedisPool(new JedisPoolConfig(), this.host);
                 this.store= new RedisSessionStore(this.identifierFactory, pool);
 
-                LOG.log(Level.INFO, "Using \"redis\" backend: {0}", pool);
+                LOG.log(Level.INFO, "Using \"redis\" backend: {0} @ {1}", new Object[] { pool, this.host });
                 break;
             }
                 
