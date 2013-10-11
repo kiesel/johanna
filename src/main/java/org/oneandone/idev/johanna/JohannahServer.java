@@ -12,6 +12,8 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 import java.nio.charset.Charset;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -33,10 +35,11 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class JohannahServer extends Command {
     private static final Logger LOG = Logger.getLogger(JohannahServer.class.getName());
+    private static final int MAX_THREADS = 1;
 
     private int port;
     SessionStore store;
-    private String host;
+    private String host= "127.0.0.1";
     private IdentifierFactory identifierFactory;
     
     @Arg
@@ -77,7 +80,10 @@ public class JohannahServer extends Command {
             }
                 
             case "redis": {
-                JedisPool pool= new JedisPool(new JedisPoolConfig(), this.host);
+                JedisPoolConfig config= new JedisPoolConfig();
+                config.setMaxActive(MAX_THREADS);
+                JedisPool pool= new JedisPool(config, this.host);
+                
                 this.store= new RedisSessionStore(this.identifierFactory, pool);
 
                 LOG.log(Level.INFO, "Using \"redis\" backend: {0} @ {1}", new Object[] { pool, this.host });
@@ -104,10 +110,11 @@ public class JohannahServer extends Command {
         
         final EventLoopGroup bossGroup = new NioEventLoopGroup();
         final EventLoopGroup workerGroup = new NioEventLoopGroup();
+        final EventExecutorGroup executorGroup = new DefaultEventExecutorGroup(MAX_THREADS);
         try {
             LOG.info("===> Starting Johanna Server.");
             store.startAutomaticGarbageCollection();
-
+            
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
@@ -119,7 +126,7 @@ public class JohannahServer extends Command {
                      ));
                      ch.pipeline().addLast("decoder", new StringDecoder(Charset.forName("iso-8859-1")));
                      ch.pipeline().addLast("encoder", new StringEncoder(Charset.forName("iso-8859-1")));
-                     ch.pipeline().addLast(new JohannaServerHandler(store));
+                     ch.pipeline().addLast(executorGroup, new JohannaServerHandler(store));
                  }
              })
              .option(ChannelOption.SO_BACKLOG, 128)
@@ -139,6 +146,7 @@ public class JohannahServer extends Command {
             store.stopAutomaticGarbageCollection();
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
+            executorGroup.shutdownGracefully();
         }
     }
 }

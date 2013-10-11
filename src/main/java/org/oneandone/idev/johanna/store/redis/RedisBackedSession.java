@@ -42,7 +42,7 @@ public class RedisBackedSession extends AbstractSession {
     public String getValue(String k) {
         Jedis j= this.jedis();
         try {
-            return this.pool.getResource().hget(this.key(), this.marshal(k));
+            return j.hget(this.key(), this.marshal(k));
         } finally {
             this.pool.returnResource(j);
         }
@@ -52,7 +52,7 @@ public class RedisBackedSession extends AbstractSession {
     public boolean removeValue(String k) {
         Jedis j= this.jedis();
         try {
-            return (1 == this.pool.getResource().hdel(this.key(), this.marshal(k)));
+            return (1 == j.hdel(this.key(), this.marshal(k)));
         } finally {
             this.pool.returnResource(j);
         }
@@ -62,7 +62,7 @@ public class RedisBackedSession extends AbstractSession {
     public boolean hasValue(String k) {
         Jedis j= this.jedis();
         try {
-            return this.redis().hexists(this.key(), this.marshal(k));
+            return j.hexists(this.key(), this.marshal(k));
         } finally {
             this.pool.returnResource(j);
         }
@@ -73,10 +73,11 @@ public class RedisBackedSession extends AbstractSession {
         Set<String> out, set;
         Jedis j= this.jedis();
         try {
-            set= this.redis().hkeys(this.key());
+            set= j.hkeys(this.key());
         } finally {
             this.pool.returnResource(j);
         }
+        
         out= new HashSet(set.size());
         for (String s : set) {
             if (REDIS_META_KEY.equals(s)) continue;
@@ -91,7 +92,7 @@ public class RedisBackedSession extends AbstractSession {
         LOG.log(Level.INFO, "Terminating session {0}", this.getId());
         Jedis j= this.jedis();
         try {
-            this.redis().del(this.key());
+            j.del(this.key());
         } finally {
             this.pool.returnResource(j);
         }

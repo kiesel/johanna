@@ -14,6 +14,7 @@ import org.oneandone.idev.johanna.store.AbstractSession;
 import org.oneandone.idev.johanna.store.id.Identifier;
 import org.oneandone.idev.johanna.store.SessionStore;
 import org.oneandone.idev.johanna.store.id.IdentifierFactory;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 /**
@@ -57,13 +58,18 @@ public class RedisSessionStore implements SessionStore {
         long count= 0;
         long terminated= 0;
         
-        Iterator<String> i= this.pool.getResource().keys(RedisBackedSession.REDIS_PREFIX).iterator();
-        while (i.hasNext()) {
-            RedisBackedSession s= this.session(i.next());
-            count++;
-            memory+= s.payloadBytesUsed();
-            
-            if (s.hasExpired()) terminated++;
+        Jedis j= this.pool.getResource();
+        try {
+            Iterator<String> i= j.keys(RedisBackedSession.REDIS_PREFIX).iterator();
+            while (i.hasNext()) {
+                RedisBackedSession s= this.session(i.next());
+                count++;
+                memory+= s.payloadBytesUsed();
+
+                if (s.hasExpired()) terminated++;
+            }
+        } finally {
+            this.pool.returnResource(j);
         }
         
         LOG.log(Level.INFO, "Stats: [{0}] sessions [{1}] expired, [{2}] bytes used", new Object[]{count, terminated, memory});
