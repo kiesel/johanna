@@ -7,16 +7,26 @@ is written in Java.
 ## Usage
 
 ```sh
-$ java org.oneandone.idev.johanna.JohannahServer [<port>]
+$ java org.oneandone.idev.johanna.JohannahServer [--port=2001] \
+  [--backend=memory|redis] \
+  [--host=127.0.0.1] \
+  [--identifier=md5|uuid]
 ```
 
 or - if you run the uber-jar:
 
 ```sh
-$ java -jar /path/to/johanna-jar.jar [<port>]
+$ java -jar /path/to/johanna-jar.jar  [--port=2001] \
+  [--backend=memory|redis] \
+  [--host=127.0.0.1] \
+  [--identifier=md5|uuid]
 ```
 
-<port> defaults to 2001.
+* port: defaults to 2001.
+* backend: supports `memory` (keep sessions in RAM), `redis` (use Redis key-value
+  store as session storage).
+* host: host of Redis store
+* identifier: use MD5 or UUID as session identifier implementation 
 
 ## Implemented protocol commands
 
