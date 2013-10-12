@@ -133,7 +133,7 @@ public class MemorySessionStore implements SessionStore {
     }
     
     @Override
-    public void startAutomaticGarbageCollection() {
+    public void scheduleMaintenanceTask() {
         if (null != this.gc) return;
 
         LOG.info("---> Scheduled garbage collection run.");
@@ -144,15 +144,16 @@ public class MemorySessionStore implements SessionStore {
             public void run() {
                 cleanupSessions();
             }
-        }, intervalGC, intervalGC);
+        }, 0, this.intervalGC);
     }
     
     @Override
-    public void stopAutomaticGarbageCollection() throws InterruptedException {
+    public void cancelMaintenanceTask() throws InterruptedException {
         if (this.gc == null) return;
 
         LOG.info("---> Unscheduling garbage collection run.");
         this.gc.cancel();
+        this.gc= null;
     }
 
     @Override

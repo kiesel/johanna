@@ -29,9 +29,9 @@ public interface SessionStore {
 
     int size();
 
-    void startAutomaticGarbageCollection();
+    void scheduleMaintenanceTask();
 
-    void stopAutomaticGarbageCollection() throws InterruptedException;
+    void cancelMaintenanceTask() throws InterruptedException;
 
     boolean terminateSession(String id);
 

@@ -4,8 +4,10 @@
  */
 package org.oneandone.idev.johanna.store.redis;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -54,25 +56,22 @@ public class RedisSessionStore implements SessionStore {
 
     @Override
     public void dumpStats() {
-        long memory= 0;
         long count= 0;
         long terminated= 0;
         
-        Jedis j= this.pool.getResource();
-        try {
-            Iterator<String> i= j.keys(RedisBackedSession.REDIS_PREFIX).iterator();
-            while (i.hasNext()) {
-                RedisBackedSession s= this.session(i.next());
-                count++;
-                memory+= s.payloadBytesUsed();
-
+        Iterator<String> i = this.sessionIds();
+        while (i.hasNext()) {
+            RedisBackedSession s= this.session(i.next());
+            count++;
+            
+            if (s != null) {
                 if (s.hasExpired()) terminated++;
+            } else {
+                terminated++;
             }
-        } finally {
-            this.pool.returnResource(j);
         }
         
-        LOG.log(Level.INFO, "Stats: [{0}] sessions [{1}] expired, [{2}] bytes used", new Object[]{count, terminated, memory});
+        LOG.log(Level.INFO, "Stats: [{0}] sessions [{1}] expired", new Object[]{count, terminated});
     }
 
     @Override
@@ -96,7 +95,7 @@ public class RedisSessionStore implements SessionStore {
     }
 
     @Override
-    public void startAutomaticGarbageCollection() {
+    public void scheduleMaintenanceTask() {
         if (null != this.gc) return;
 
         LOG.info("---> Scheduled garbage collection run.");
@@ -108,15 +107,16 @@ public class RedisSessionStore implements SessionStore {
                 dumpStats();
                 cleanupSessions();
             }
-        }, this.intervalGC, this.intervalGC);
+        }, 0, this.intervalGC);
     }
     
     @Override
-    public void stopAutomaticGarbageCollection() throws InterruptedException {
+    public void cancelMaintenanceTask() throws InterruptedException {
         if (this.gc == null) return;
 
         LOG.info("---> Unscheduling garbage collection run.");
         this.gc.cancel();
+        this.gc= null;
     }
 
     @Override
@@ -138,5 +138,21 @@ public class RedisSessionStore implements SessionStore {
     @Override
     public final void setIdentifierFactory(IdentifierFactory f) {
         this.idFactory= Objects.requireNonNull(f);
+    }
+
+    private Iterator<String> sessionIds() {
+        Jedis j= this.pool.getResource();
+        Set<String> out= new HashSet<>();
+        try {
+            Iterator<String> i= j.keys(RedisBackedSession.REDIS_PREFIX + "*").iterator();
+            while(i.hasNext()) {
+                
+                // Strip REDIS_PREFIX from id
+                out.add(i.next().substring(RedisBackedSession.REDIS_PREFIX.length()));
+            }
+            return out.iterator();
+        } finally {
+            this.pool.returnResource(j);
+        }
     }
 }

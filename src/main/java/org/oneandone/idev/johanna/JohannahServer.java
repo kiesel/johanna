@@ -113,7 +113,7 @@ public class JohannahServer extends Command {
         final EventExecutorGroup executorGroup = new DefaultEventExecutorGroup(MAX_THREADS);
         try {
             LOG.info("===> Starting Johanna Server.");
-            store.startAutomaticGarbageCollection();
+            store.scheduleMaintenanceTask();
             
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -143,7 +143,7 @@ public class JohannahServer extends Command {
             LOG.info("===> Shutting down Johanna instance.");
         } finally {
             LOG.info("---> Cleanup.");
-            store.stopAutomaticGarbageCollection();
+            store.cancelMaintenanceTask();
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
             executorGroup.shutdownGracefully();

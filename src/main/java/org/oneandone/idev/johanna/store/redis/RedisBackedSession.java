@@ -77,7 +77,6 @@ public class RedisBackedSession extends AbstractSession {
         } finally {
             this.pool.returnResource(j);
         }
-        
         out= new HashSet(set.size());
         for (String s : set) {
             if (REDIS_META_KEY.equals(s)) continue;
