@@ -24,7 +24,7 @@ public class VarWriteRequest extends SessionKeyBasedRequest {
     protected Response processSessionKey(SessionStore store, AbstractSession s, String name) {
         String value= this.paramAt(4);
         
-        s.putValue(name, value);
+        s.putValue(name, this.toValue(value));
         return Response.OK;
     }
     

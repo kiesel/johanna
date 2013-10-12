@@ -6,7 +6,9 @@ package org.oneandone.idev.johanna.protocol.impl;
 
 import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.AbstractSession;
+import org.oneandone.idev.johanna.store.PlainValue;
 import org.oneandone.idev.johanna.store.SessionStore;
+import org.oneandone.idev.johanna.store.Value;
 
 /**
  *
@@ -29,6 +31,10 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
         
         return processSessionKey(store, s, name);
     }
-
+    
+    protected Value toValue(String s) {
+        return new PlainValue(s);
+    }
+    
     abstract protected Response processSessionKey(SessionStore store, AbstractSession s, String name);
 }

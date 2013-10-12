@@ -23,6 +23,7 @@ public class VarReadRequest extends SessionKeyBasedRequest {
     @Override
     protected Response processSessionKey(SessionStore store, AbstractSession s, String name) {
         if (!s.hasValue(name)) return Response.NOKEY;
-        return new Response(true, s.getValue(name));
+        
+        return new Response(true, s.getValue(name).asEncoded());
     }
 }

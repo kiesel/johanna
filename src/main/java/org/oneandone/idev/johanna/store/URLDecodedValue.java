@@ -15,6 +15,10 @@ public class URLDecodedValue implements Value {
         this.intern= codec.decode(orig.getBytes());
     }
     
+    public URLDecodedValue(byte[] bytes) {
+        this.intern= bytes;
+    }
+    
     @Override
     public String asEncoded() {
         return new String(codec.encode(this.intern));

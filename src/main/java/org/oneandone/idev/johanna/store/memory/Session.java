@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import org.oneandone.idev.johanna.store.AbstractSession;
+import org.oneandone.idev.johanna.store.Value;
 import org.oneandone.idev.johanna.store.id.Identifier;
 
 /**
@@ -20,7 +21,7 @@ import org.oneandone.idev.johanna.store.id.Identifier;
  */
 public class Session extends AbstractSession {
     protected Date expiryDate;
-    private Map<String, String> values;
+    private Map<String, Value> values;
 
     public Session(Identifier id, int ttl) {
         super(id, ttl);
@@ -33,13 +34,13 @@ public class Session extends AbstractSession {
     }
     
     @Override
-    public void putValue(String k, String v) {
+    public void putValue(String k, Value v) {
         this.values.put(k, v);
         this.touch();
     }
     
     @Override
-    public String getValue(String k) {
+    public Value getValue(String k) {
         return this.values.get(k);
     }
     
@@ -72,12 +73,12 @@ public class Session extends AbstractSession {
     public long payloadBytesUsed() {
         long bytes= 0;
 
-        Iterator<Entry<String, String>> i= this.values.entrySet().iterator();
+        Iterator<Entry<String, Value>> i= this.values.entrySet().iterator();
         while (i.hasNext()) {
-            Entry<String, String> entry= i.next();
+            Entry<String, Value> entry= i.next();
             
             bytes += entry.getKey().length();
-            bytes += entry.getValue().length();
+            bytes += entry.getValue().asIntern().length;
         }
         
         return bytes;

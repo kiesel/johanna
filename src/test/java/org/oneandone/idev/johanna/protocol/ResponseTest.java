@@ -4,10 +4,6 @@
  */
 package org.oneandone.idev.johanna.protocol;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -39,7 +35,7 @@ public class ResponseTest {
     @Test
     public void failure_must_have_message() {
         try {
-            new Response(false);
+            Response r= new Response(false);
             fail("Expected exception not caught.");
         } catch (IllegalStateException e) {
         }

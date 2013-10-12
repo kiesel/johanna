@@ -52,3 +52,10 @@ Parameters explained:
 * `<value>` is a whitespace delimited value` - a common approach to store arbitrary
   data there is to first urlencode the data.
 
+## Protocol
+### Basics
+The Hannah-protocol is a line-based, human readable & writable protocol. Clients
+issue a command, the server replies. There are no server-initiated actions on
+the wire.
+
+### Requests

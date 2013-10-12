@@ -11,6 +11,10 @@ public class PlainValue implements Value {
         this.value= value;
     }
     
+    public PlainValue(byte[] bytes) {
+        this(new String(bytes));
+    }
+    
     @Override
     public String asEncoded() {
         return this.value;

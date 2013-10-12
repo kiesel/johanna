@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import org.oneandone.idev.johanna.store.AbstractSession;
+import org.oneandone.idev.johanna.store.PlainValue;
+import org.oneandone.idev.johanna.store.Value;
 import org.oneandone.idev.johanna.store.id.Identifier;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -29,20 +31,20 @@ public class RedisBackedSession extends AbstractSession {
     }
     
     @Override
-    public void putValue(String k, String v) {
+    public void putValue(String k, Value v) {
         Jedis j= this.jedis();
         try {
-            j.hset(this.key(), this.marshal(k), v);
+            j.hset(this.key().getBytes(), this.marshal(k).getBytes(), v.asIntern());
         } finally {
             this.pool.returnResource(j);
         }
     }
 
     @Override
-    public String getValue(String k) {
+    public Value getValue(String k) {
         Jedis j= this.jedis();
         try {
-            return j.hget(this.key(), this.marshal(k));
+            return this.valueFromIntern(j.hget(this.key().getBytes(), this.marshal(k).getBytes()));
         } finally {
             this.pool.returnResource(j);
         }
@@ -155,5 +157,9 @@ public class RedisBackedSession extends AbstractSession {
             throw new IllegalArgumentException("Invalid key name, expected start with prefix.");
         }
         return s.substring(2);
+    }
+
+    public Value valueFromIntern(byte[] bytes) {
+        return new PlainValue(bytes);
     }
 }
