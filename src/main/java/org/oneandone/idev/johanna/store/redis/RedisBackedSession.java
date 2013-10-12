@@ -31,20 +31,21 @@ public class RedisBackedSession extends AbstractSession {
     }
     
     @Override
-    public void putValue(String k, Value v) {
+    public void putValue(String k, String v) {
         Jedis j= this.jedis();
         try {
-            j.hset(this.key().getBytes(), this.marshal(k).getBytes(), v.asIntern());
+            j.hset(this.key().getBytes(), this.marshal(k).getBytes(), this.fromEncoded(v).asIntern());
         } finally {
             this.pool.returnResource(j);
         }
     }
 
     @Override
-    public Value getValue(String k) {
+    public String getValue(String k) {
         Jedis j= this.jedis();
         try {
-            return this.valueFromIntern(j.hget(this.key().getBytes(), this.marshal(k).getBytes()));
+            byte[] bytes= j.hget(this.key().getBytes(), this.marshal(k).getBytes());
+            return this.fromIntern(bytes).asEncoded();
         } finally {
             this.pool.returnResource(j);
         }
@@ -159,6 +160,10 @@ public class RedisBackedSession extends AbstractSession {
         return s.substring(2);
     }
 
+    public Value valueFromString(String value) {
+        return new PlainValue(value);
+    }
+    
     public Value valueFromIntern(byte[] bytes) {
         return new PlainValue(bytes);
     }

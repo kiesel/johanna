@@ -64,4 +64,12 @@ public abstract class AbstractSession implements ISession {
     }
 
     protected abstract void terminate();
+    
+    protected Value fromEncoded(String value) {
+        return new PlainValue(value);
+    }
+    
+    protected Value fromIntern(byte[] bytes) {
+        return new PlainValue(bytes);
+    }
 }

@@ -32,9 +32,5 @@ public abstract class SessionKeyBasedRequest extends SessionBasedRequest {
         return processSessionKey(store, s, name);
     }
     
-    protected Value toValue(String s) {
-        return new PlainValue(s);
-    }
-    
     abstract protected Response processSessionKey(SessionStore store, AbstractSession s, String name);
 }

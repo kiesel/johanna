@@ -18,7 +18,7 @@ public interface ISession {
 
     int getTTL();
 
-    Value getValue(String k);
+    String getValue(String k);
 
     boolean hasExpired();
 
@@ -28,7 +28,7 @@ public interface ISession {
 
     long payloadBytesUsed();
 
-    void putValue(String k, Value v);
+    void putValue(String k, String v);
 
     boolean removeValue(String k);
 
@@ -37,5 +37,4 @@ public interface ISession {
     int setTimeout(final int ttl);
 
     boolean terminateIfExpired();
-    
 }

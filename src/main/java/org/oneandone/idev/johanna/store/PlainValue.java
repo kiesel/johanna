@@ -1,5 +1,7 @@
 package org.oneandone.idev.johanna.store;
 
+import java.nio.charset.Charset;
+
 /**
  *
  * @author Alex Kiesel <alex.kiesel@1und1.de>
@@ -12,7 +14,7 @@ public class PlainValue implements Value {
     }
     
     public PlainValue(byte[] bytes) {
-        this(new String(bytes));
+        this(new String(bytes, Charset.forName("utf-8")));
     }
     
     @Override
@@ -22,6 +24,6 @@ public class PlainValue implements Value {
 
     @Override
     public byte[] asIntern() {
-        return this.value.getBytes();
+        return this.value.getBytes(Charset.forName("utf-8"));
     }
 }

@@ -27,7 +27,7 @@ public class SessionTest {
     @Before
     public void setUp() {
         this.cut= new Session(new MD5Identifier(""));
-        this.cut.putValue("k", new PlainValue("v"));
+        this.cut.putValue("k", "v");
     }
     
     /**
@@ -44,8 +44,8 @@ public class SessionTest {
      */
     @Test
     public void testPutValueDoesOverwrite() {
-        this.cut.putValue("k", new PlainValue("hello"));
-        assertEquals("hello", this.cut.getValue("k").asEncoded());
+        this.cut.putValue("k", "hello");
+        assertEquals("hello", this.cut.getValue("k"));
     }
 
     /**
@@ -61,7 +61,7 @@ public class SessionTest {
      */
     @Test
     public void testGetValue() {
-        assertEquals("v", this.cut.getValue("k").asEncoded());
+        assertEquals("v", this.cut.getValue("k"));
     }
     
 
@@ -106,7 +106,7 @@ public class SessionTest {
     @Test
     public void hasExpired() throws Exception {
         this.cut.setTTL(1);
-        this.cut.putValue("foo", new PlainValue("bar"));
+        this.cut.putValue("foo", "bar");
         
         assertTrue(this.cut.hasExpired(new Date(new Date().getTime() + 2000)));
     }
@@ -114,7 +114,7 @@ public class SessionTest {
     @Test
     public void expires_next_day() throws ParseException {
         Session s= new Session(new MD5Identifier(""), 86400);
-        s.putValue("foo", new PlainValue("bar"));
+        s.putValue("foo", "bar");
 
         Calendar today= new GregorianCalendar();
         Calendar actual= new GregorianCalendar();
@@ -125,11 +125,11 @@ public class SessionTest {
     
     @Test
     public void expiry_reset_by_writing_operation() throws Exception {
-        this.cut.putValue("foo", new PlainValue("bar"));
+        this.cut.putValue("foo", "bar");
         Date origExp= this.cut.expiryDate();
         Thread.sleep(1000);
         
-        this.cut.putValue("bar", new PlainValue("baz"));
+        this.cut.putValue("bar", "baz");
         Date newExp= this.cut.expiryDate();
         
         assertNotEquals(origExp, newExp);
@@ -137,7 +137,7 @@ public class SessionTest {
 
     @Test
     public void expiry_untouched_by_writing_operation() throws Exception {
-        this.cut.putValue("foo", new PlainValue("bar"));
+        this.cut.putValue("foo", "bar");
         Date origExp= this.cut.expiryDate();
         Thread.sleep(1000);
         

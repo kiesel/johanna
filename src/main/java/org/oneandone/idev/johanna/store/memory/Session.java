@@ -34,14 +34,17 @@ public class Session extends AbstractSession {
     }
     
     @Override
-    public void putValue(String k, Value v) {
-        this.values.put(k, v);
+    public void putValue(String k, String v) {
+        this.values.put(k, this.fromEncoded(v));
         this.touch();
     }
     
     @Override
-    public Value getValue(String k) {
-        return this.values.get(k);
+    public String getValue(String k) {
+        Value v= this.values.get(k);
+        if (v == null) return null;
+        
+        return v.asEncoded();
     }
     
     @Override

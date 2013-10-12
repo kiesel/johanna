@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.oneandone.idev.johanna.store.AbstractSession;
 import org.oneandone.idev.johanna.store.id.Identifier;
 import org.oneandone.idev.johanna.store.SessionStore;
+import org.oneandone.idev.johanna.store.Value;
 import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 
 /**
