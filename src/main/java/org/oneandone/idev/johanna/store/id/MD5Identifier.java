@@ -4,10 +4,8 @@
  */
 package org.oneandone.idev.johanna.store.id;
 
-import org.oneandone.idev.johanna.store.id.Identifier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;

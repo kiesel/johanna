@@ -5,7 +5,6 @@
 package org.oneandone.idev.johanna.protocol;
 
 import org.oneandone.idev.johanna.store.SessionStore;
-import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
 
 /**
  *

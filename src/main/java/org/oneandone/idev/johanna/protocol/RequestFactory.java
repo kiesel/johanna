@@ -25,7 +25,7 @@ public class RequestFactory {
     private Map<String, Class> cmds;
 
     public RequestFactory() {
-        this.cmds= new HashMap<String, Class>();
+        this.cmds= new HashMap<>();
         this.cmds.put("session_create", SessionCreateRequest.class);
         this.cmds.put("session_terminate", SessionTerminateRequest.class);
         this.cmds.put("session_isvalid", SessionIsValidRequest.class);

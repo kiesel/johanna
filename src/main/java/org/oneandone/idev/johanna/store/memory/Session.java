@@ -85,11 +85,11 @@ public class Session extends AbstractSession {
 
     @Override
     protected final void touch() {
-        this.expiryDate = new Date(new Date().getTime() + (this.getTTL() * 1000));
+        this.expiryDate = new Date(new Date().getTime() + (this.getTTL() * 1000L));
     }
     
     public Date expiryDate() {
-        return this.expiryDate;
+        return (Date)this.expiryDate.clone();
     }
 
     @Override

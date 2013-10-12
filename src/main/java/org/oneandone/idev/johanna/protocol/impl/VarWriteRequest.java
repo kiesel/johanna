@@ -20,6 +20,7 @@ public class VarWriteRequest extends SessionKeyBasedRequest {
         super(command);
     }
     
+    @Override
     protected Response processSessionKey(SessionStore store, AbstractSession s, String name) {
         String value= this.paramAt(4);
         

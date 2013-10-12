@@ -4,7 +4,6 @@
  */
 package org.oneandone.idev.johanna.store;
 
-import java.util.Date;
 import java.util.Set;
 
 /**

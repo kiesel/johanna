@@ -111,10 +111,6 @@ public class RedisBackedSession extends AbstractSession {
         return 0;
     }
 
-    private Jedis redis() {
-        return this.pool.getResource();
-    }
-
     public void register() {
         this.touch();
     }

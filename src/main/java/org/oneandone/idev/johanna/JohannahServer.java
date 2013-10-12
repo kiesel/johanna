@@ -15,6 +15,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.nio.charset.Charset;
+import java.util.Locale;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +55,7 @@ public class JohannahServer extends Command {
     
     @Arg(name= "identifier", option= 'i')
     public void setIdentityMode(@Default("md5") String id) {
-        this.identifierFactory= IdentifierFactory.valueOf(id.toUpperCase());
+        this.identifierFactory= IdentifierFactory.valueOf(id.toUpperCase(Locale.US));
         LOG.log(Level.INFO, "Using IdentifierFactory {0}", this.identifierFactory);
     }
     
