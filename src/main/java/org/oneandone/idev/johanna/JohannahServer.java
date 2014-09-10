@@ -39,6 +39,7 @@ public class JohannahServer extends Command {
     private static final int MAX_THREADS = 1;
 
     private int port;
+    java.util.function.Function<IdentifierFactory, SessionStore> initStore;
     SessionStore store;
     private String host= "127.0.0.1";
     private IdentifierFactory identifierFactory;
@@ -76,7 +77,7 @@ public class JohannahServer extends Command {
         switch (backend) {
             case "memory": {
                 LOG.info("Using \"memory\" backend.");
-                this.store= new MemorySessionStore(this.identifierFactory);
+                this.initStore = identifierFactory -> new MemorySessionStore(this.identifierFactory);
                 break;
             }
                 
@@ -84,21 +85,21 @@ public class JohannahServer extends Command {
                 JedisPoolConfig config= new JedisPoolConfig();
                 config.setMaxActive(MAX_THREADS);
                 JedisPool pool= new JedisPool(config, this.host);
-                
-                this.store= new RedisSessionStore(this.identifierFactory, pool);
-
                 LOG.log(Level.INFO, "Using \"redis\" backend: {0} @ {1}", new Object[] { pool, this.host });
+                
+                this.initStore= identifierFactory -> new RedisSessionStore(this.identifierFactory, pool);
+
                 break;
             }
-                
-            default: {
+
+            default:
                 throw new IllegalArgumentException("Backend must be one of 'memory' or 'redis'");
-            }
         }
     }
     
     @Override
     public void run() {
+        this.store = this.initStore.apply(this.identifierFactory);
         try {
             this.runInternal();
         } catch (Exception ex) {
