@@ -1,6 +1,8 @@
 Johanna
 =======
 
+[![Build Status on TravisCI](https://secure.travis-ci.org/kiesel/johanna.svg)](http://travis-ci.org/kiesel/johanna)
+
 Johanna is a server implementation of the Hannah session server `hannahd` and
 is written in Java.
 
