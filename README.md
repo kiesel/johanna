@@ -52,6 +52,10 @@ Parameters explained:
 * `<value>` is a whitespace delimited value` - a common approach to store arbitrary
   data there is to first urlencode the data.
 
+## Prerequisites
+* The build requires Java 7
+* A non-global dependency jcli is contained in the `contrib/` folder
+
 ## Protocol
 ### Basics
 The Hannah-protocol is a line-based, human readable & writable protocol. Clients
