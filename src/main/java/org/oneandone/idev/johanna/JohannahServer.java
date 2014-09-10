@@ -41,6 +41,7 @@ public class JohannahServer extends Command {
     private int port;
     SessionStore store;
     private String host= "127.0.0.1";
+    private String backend;
     private IdentifierFactory identifierFactory;
     
     @Arg
@@ -73,6 +74,21 @@ public class JohannahServer extends Command {
     
     @Arg(name= "backend", option= 'b')
     public void setSessionBackend(@Default("memory") String backend) {
+        this.backend = backend;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            this.runInternal();
+        } catch (Exception ex) {
+            Logger.getLogger(JohannahServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void runInternal() throws Exception {
+        LOG.info("Server startup.");
+
         switch (backend) {
             case "memory": {
                 LOG.info("Using \"memory\" backend.");
@@ -95,20 +111,7 @@ public class JohannahServer extends Command {
                 throw new IllegalArgumentException("Backend must be one of 'memory' or 'redis'");
             }
         }
-    }
-    
-    @Override
-    public void run() {
-        try {
-            this.runInternal();
-        } catch (Exception ex) {
-            Logger.getLogger(JohannahServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void runInternal() throws Exception {
-        LOG.info("Server startup.");
-        
+
         final EventLoopGroup bossGroup = new NioEventLoopGroup();
         final EventLoopGroup workerGroup = new NioEventLoopGroup();
         final EventExecutorGroup executorGroup = new DefaultEventExecutorGroup(MAX_THREADS);
