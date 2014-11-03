@@ -150,16 +150,23 @@ public class JohannahServer {
         }
     }
     
-    public static void main(String[] args) throws CmdLineException {
-        JohannahServer johannahServer = new JohannahServer();
-        CmdLineParser cmdLineParser = new CmdLineParser(johannahServer);
-        cmdLineParser.parseArgument(args);
-        if (johannahServer.help) {
+    public static void main(String[] args) {
+        try {
+            JohannahServer johannahServer = new JohannahServer();
+            CmdLineParser cmdLineParser = new CmdLineParser(johannahServer);
+            cmdLineParser.parseArgument(args);
+            if (johannahServer.help) {
+                cmdLineParser.printUsage(System.err);
+                System.err.flush();
+                return;
+            }
+            JohannahServer.setDebug(johannahServer.debug);
+            johannahServer.run();
+        } catch (CmdLineException ex) {
+            System.err.println(ex);
             cmdLineParser.printUsage(System.err);
             System.err.flush();
             return;
         }
-        JohannahServer.setDebug(johannahServer.debug);
-        johannahServer.run();
     }
 }
