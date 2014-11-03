@@ -168,7 +168,6 @@ public class JohannahServer {
                 cmdLineParser.printUsage(System.err);
                 System.err.flush();
             }
-            return;
         }
     }
 }
