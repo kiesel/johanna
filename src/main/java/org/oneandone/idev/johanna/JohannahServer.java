@@ -46,7 +46,7 @@ public class JohannahServer {
     @Option(name = "--port", aliases = "-p", usage = "The TCP/IP port to bind to")
     private int port = 2001;
         
-    @Option(name = "--host", aliases = "-h", usage = "The IP of the REDIS server to bind to (see --backend, defaults to 127.0.0.1)")
+    @Option(name = "--host", aliases = "-h", usage = "The IP of the REDIS server to bind to (see --backend, defaults to 127.0.0.1)", metaVar = "IP")
     private String host= "127.0.0.1";
     
     private enum Backend {
