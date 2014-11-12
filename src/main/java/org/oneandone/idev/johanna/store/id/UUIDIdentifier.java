@@ -4,8 +4,10 @@ import java.util.UUID;
 
 /**
  *
+ * @deprecated there is pseudo generated randomness in UUID.randomUUID
  * @author kiesel
  */
+@Deprecated
 public class UUIDIdentifier extends Identifier {
     private final UUID id;
 
@@ -25,8 +27,8 @@ public class UUIDIdentifier extends Identifier {
     
     public static UUIDIdentifier forId(String id) {
         return new UUIDIdentifier(
-                id.substring(0, 8),
-                UUID.fromString(id.substring(8))
+                prefixFrom(id),
+                UUID.fromString(suffixFrom(id))
         );
     }
     
