@@ -33,11 +33,10 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>net.xp-framework</groupId>
-            <artifactId>jcli</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+            <version>2.0.29</version>
+        </dependency>        
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -61,13 +60,13 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.xp_framework.jcli.cmd.Runner</mainClass>
+                                    <mainClass>org.oneandone.idev.johanna.JohannahServer</mainClass>
                                     <!--  org.oneandone.idev.johanna.JohannahServer - -backend=redis -->
                                 </transformer>
                             </transformers>
                             <artifactSet>
                                 <includes>
-                                    <include>net.xp-framework:jcli</include>
+                                    <include>args4j:*</include>
                                     <include>io.netty:netty-all</include>
                                     <include>redis.clients:jedis</include>
                                     <include>commons-pool:commons-pool</include>

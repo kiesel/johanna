@@ -15,54 +15,46 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.nio.charset.Charset;
-import java.util.Locale;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.xp_framework.jcli.cmd.Arg;
-import net.xp_framework.jcli.cmd.Command;
-import net.xp_framework.jcli.cmd.Default;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.oneandone.idev.johanna.netty.JohannaServerHandler;
 import org.oneandone.idev.johanna.store.SessionStore;
-import org.oneandone.idev.johanna.store.id.IdentifierFactory;
-import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
-import org.oneandone.idev.johanna.store.redis.RedisSessionStore;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-    
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;    
     
 /**
  * Discards any incoming data.
  */
-public class JohannahServer extends Command {
+public class JohannahServer {
     private static final Logger LOG = Logger.getLogger(JohannahServer.class.getName());
-    private static final int MAX_THREADS = 1;
-
-    private int port;
-    SessionStore store;
+    static final int MAX_THREADS = 1;
+    
+    @Option(name = "--help", help = true, usage = "This command line help")
+    private boolean help;
+    
+    @Option(name = "--debug", usage = "Whether to log with DEBUG level")
+    private boolean debug;
+    
+    @Option(name = "--port", aliases = "-p", usage = "The TCP/IP port to bind to")
+    private int port = 2001;
+        
+    @Option(name = "--host", aliases = "-h", usage = "The IP of the REDIS server to bind to (see --backend, defaults to 127.0.0.1)", metaVar = "IP")
     private String host= "127.0.0.1";
-    private String backend;
-    private IdentifierFactory identifierFactory;
     
-    @Arg
-    public void setPort(@Default("2001") String port) {
-        this.port = Integer.parseInt(port);
-    }
+
+    @Option(name = "--backend", aliases = "-b", usage = "The session storage backend to use")
+    private SessionStoreFactory backendName = SessionStoreFactory.MEMORY;
     
-    @Arg(name= "host", option= 'h')
-    public void setHost(@Default("127.0.0.1") String host) {
-        this.host= host;
-    }
+    @Option(name = "--identifier", aliases = "-i", usage = "The identifier factory to use")
+    private IdentifierFactory identifierFactory = IdentifierFactory.MD5;    
     
-    @Arg(name= "identifier", option= 'i')
-    public void setIdentityMode(@Default("md5") String id) {
-        this.identifierFactory= IdentifierFactory.valueOf(id.toUpperCase(Locale.US));
-        LOG.log(Level.INFO, "Using IdentifierFactory {0}", this.identifierFactory);
-    }
+    SessionStore store;
     
-    @Arg(name= "debug", option= 'd')
-    public void setDebug(@Default("false") String debug) {
-        if ("".equals(debug)) {
+    private static void setDebug(boolean debug) {
+        if (debug) {
             LOG.info("Enabling debug mode logging.");
             Logger log= Logger.getLogger("");
             for (Handler h : log.getHandlers()) {
@@ -72,12 +64,6 @@ public class JohannahServer extends Command {
         }
     }
     
-    @Arg(name= "backend", option= 'b')
-    public void setSessionBackend(@Default("memory") String backend) {
-        this.backend = backend;
-    }
-    
-    @Override
     public void run() {
         try {
             this.runInternal();
@@ -86,31 +72,10 @@ public class JohannahServer extends Command {
         }
     }
     
-    public void runInternal() throws Exception {
+    private void runInternal() throws Exception {
         LOG.info("Server startup.");
 
-        switch (backend) {
-            case "memory": {
-                LOG.info("Using \"memory\" backend.");
-                this.store= new MemorySessionStore(this.identifierFactory);
-                break;
-            }
-                
-            case "redis": {
-                JedisPoolConfig config= new JedisPoolConfig();
-                config.setMaxActive(MAX_THREADS);
-                JedisPool pool= new JedisPool(config, this.host);
-                
-                this.store= new RedisSessionStore(this.identifierFactory, pool);
-
-                LOG.log(Level.INFO, "Using \"redis\" backend: {0} @ {1}", new Object[] { pool, this.host });
-                break;
-            }
-                
-            default: {
-                throw new IllegalArgumentException("Backend must be one of 'memory' or 'redis'");
-            }
-        }
+        this.store = backendName.create(identifierFactory, host);
 
         final EventLoopGroup bossGroup = new NioEventLoopGroup();
         final EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -151,6 +116,28 @@ public class JohannahServer extends Command {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
             executorGroup.shutdownGracefully();
+        }
+    }
+    
+    public static void main(String[] args) {
+        CmdLineParser cmdLineParser = null;
+        try {
+            JohannahServer johannahServer = new JohannahServer();
+            cmdLineParser = new CmdLineParser(johannahServer);
+            cmdLineParser.parseArgument(args);
+            if (johannahServer.help) {
+                cmdLineParser.printUsage(System.err);
+                System.err.flush();
+                return;
+            }
+            JohannahServer.setDebug(johannahServer.debug);
+            johannahServer.run();
+        } catch (CmdLineException ex) {
+            System.err.println(ex);
+            if (cmdLineParser != null) {
+                cmdLineParser.printUsage(System.err);
+                System.err.flush();
+            }
         }
     }
 }

@@ -1,6 +1,4 @@
 language: java
-before_install:
-  - mvn install:install-file -Dfile=contrib/jcli-1.0-SNAPSHOT.jar -DgroupId=net.xp-framework -DartifactId=jcli -Dversion=1.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
 jdk:
   - openjdk7
   - oraclejdk7
