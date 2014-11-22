@@ -21,6 +21,25 @@ public abstract class Identifier {
         return this.prefix;
     }
     
+    private final static int PREFIX_CHARS = 8;
+    
+    /** The prefix is defined to be always the first 8 chars.
+     * Keep this magic here if we want to change it.
+     * @return the prefix from the identifier.
+     */
+    protected static String prefixFrom(String identifier) {
+        // TODO IPv6
+        return identifier.substring(0, PREFIX_CHARS);
+    }
+    
+    /** The prefix is defined to be always the first 8 chars.
+     * Keep this magic here if we want to change it.
+     * @return the suffix from the identifier.
+     */
+    protected static String suffixFrom(String identifier) {
+        return identifier.substring(PREFIX_CHARS);
+    }    
+    
     @Override
     public String toString() {
         return this.prefix + this.uniqid();

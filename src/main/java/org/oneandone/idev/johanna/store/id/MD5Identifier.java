@@ -13,9 +13,11 @@ import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
 
 /**
- *
+ * @deprecated because Random is initialized with a constant seed, the MD5
+ * digests are predictable with O(1).
  * @author kiesel
  */
+@Deprecated()
 public class MD5Identifier extends Identifier {
     private static Random random;
 
@@ -39,8 +41,8 @@ public class MD5Identifier extends Identifier {
         Objects.requireNonNull(id);
         
         // TODO IPv6
-        MD5Identifier self= new MD5Identifier(id.substring(0, 8));
-        self.id= DatatypeConverter.parseHexBinary(id.substring(8));
+        MD5Identifier self= new MD5Identifier(prefixFrom(id));
+        self.id= DatatypeConverter.parseHexBinary(suffixFrom(id));
         
         return self;
     }
@@ -49,6 +51,8 @@ public class MD5Identifier extends Identifier {
         byte[] b32 = new byte[32];
         random.nextBytes(b32);
         
+        // TODO: calculating the digest out of a random number doesn't make a big
+        // difference if randomness is pseudo
         MessageDigest digest= MessageDigest.getInstance("md5");
         this.id= digest.digest(b32);
     }
@@ -67,6 +71,6 @@ public class MD5Identifier extends Identifier {
         if (null != random) return;
         
         // Length operation
-        random= new Random(0x80);
+        random= new Random(0x80); // BUG: this is the seed, not the length
     }
 }

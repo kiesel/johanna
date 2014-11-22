@@ -9,13 +9,24 @@ public enum IdentifierFactory {
 
         @Override
         public Identifier newIdentifier(String prefix) {
-            return new MD5Identifier(prefix);
+            return new SecureRandomIdentifier(prefix);
         }
 
         @Override
         public Identifier fromString(String id) {
-            return MD5Identifier.forId(id);
+            return SecureRandomIdentifier.forId(id);
         }
+    },
+    SECURERND {
+        @Override
+        public Identifier newIdentifier(String prefix) {
+            return new SecureRandomIdentifier(prefix);
+        }
+
+        @Override
+        public Identifier fromString(String id) {
+            return SecureRandomIdentifier.forId(id);
+        }        
     },
     UUID {
 

@@ -4,7 +4,7 @@
  */
 package org.oneandone.idev.johanna.store;
 
-import org.oneandone.idev.johanna.store.id.MD5Identifier;
+import org.oneandone.idev.johanna.store.id.SecureRandomIdentifier;
 import org.oneandone.idev.johanna.store.memory.Session;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -26,7 +26,7 @@ public class SessionTest {
     
     @Before
     public void setUp() {
-        this.cut= new Session(new MD5Identifier(""));
+        this.cut= new Session(new SecureRandomIdentifier(""));
         this.cut.putValue("k", "v");
     }
     
@@ -35,7 +35,7 @@ public class SessionTest {
      */
     @Test
     public void testGetId() {
-        Session other= new Session(new MD5Identifier(""));
+        Session other= new Session(new SecureRandomIdentifier(""));
         assertNotEquals(this.cut.getId(), other.getId());
     }
 
@@ -113,7 +113,7 @@ public class SessionTest {
     
     @Test
     public void expires_next_day() throws ParseException {
-        Session s= new Session(new MD5Identifier(""), 86400);
+        Session s= new Session(new SecureRandomIdentifier(""), 86400);
         s.putValue("foo", "bar");
 
         Calendar today= new GregorianCalendar();

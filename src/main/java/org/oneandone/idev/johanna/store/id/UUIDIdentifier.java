@@ -25,8 +25,8 @@ public class UUIDIdentifier extends Identifier {
     
     public static UUIDIdentifier forId(String id) {
         return new UUIDIdentifier(
-                id.substring(0, 8),
-                UUID.fromString(id.substring(8))
+                prefixFrom(id),
+                UUID.fromString(suffixFrom(id))
         );
     }
     
