@@ -4,10 +4,8 @@ import java.util.UUID;
 
 /**
  *
- * @deprecated there is pseudo generated randomness in UUID.randomUUID
  * @author kiesel
  */
-@Deprecated
 public class UUIDIdentifier extends Identifier {
     private final UUID id;
 
