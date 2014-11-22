@@ -23,19 +23,14 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.oneandone.idev.johanna.netty.JohannaServerHandler;
 import org.oneandone.idev.johanna.store.SessionStore;
-import org.oneandone.idev.johanna.store.id.IdentifierFactory;
-import org.oneandone.idev.johanna.store.memory.MemorySessionStore;
-import org.oneandone.idev.johanna.store.redis.RedisSessionStore;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-    
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;    
     
 /**
  * Discards any incoming data.
  */
 public class JohannahServer {
     private static final Logger LOG = Logger.getLogger(JohannahServer.class.getName());
-    private static final int MAX_THREADS = 1;
+    static final int MAX_THREADS = 1;
     
     @Option(name = "--help", help = true, usage = "This command line help")
     private boolean help;
@@ -45,18 +40,14 @@ public class JohannahServer {
     
     @Option(name = "--port", aliases = "-p", usage = "The TCP/IP port to bind to")
     private int port = 2001;
-    
-    
-    @Option(name = "--host", aliases = "-h", usage = "The IP to bind to")
+
+        
+    @Option(name = "--host", aliases = "-h", usage = "The IP of the REDIS server to bind to (see --backend, defaults to 127.0.0.1)", metaVar = "IP")
     private String host= "127.0.0.1";
     
-    private enum Backend {
-      MEMORY,
-      REDIS
-    };
 
     @Option(name = "--backend", aliases = "-b", usage = "The session storage backend to use")
-    private Backend backend = Backend.MEMORY;
+    private SessionStoreFactory backendName = SessionStoreFactory.MEMORY;
     
     @Option(name = "--identifier", aliases = "-i", usage = "The identifier factory to use")
     private IdentifierFactory identifierFactory = IdentifierFactory.MD5;    
@@ -85,28 +76,7 @@ public class JohannahServer {
     private void runInternal() throws Exception {
         LOG.info("Server startup.");
 
-        switch (backend) {
-            case MEMORY: {
-                LOG.info("Using \"memory\" backend.");
-                this.store= new MemorySessionStore(this.identifierFactory);
-                break;
-            }
-                
-            case REDIS: {
-                JedisPoolConfig config= new JedisPoolConfig();
-                config.setMaxActive(MAX_THREADS);
-                JedisPool pool= new JedisPool(config, this.host);
-                
-                this.store= new RedisSessionStore(this.identifierFactory, pool);
-
-                LOG.log(Level.INFO, "Using \"redis\" backend: {0} @ {1}", new Object[] { pool, this.host });
-                break;
-            }
-                
-            default: {
-                throw new IllegalArgumentException("Backend must be one of 'memory' or 'redis'");
-            }
-        }
+        this.store = backendName.create(identifierFactory, host);
 
         final EventLoopGroup bossGroup = new NioEventLoopGroup();
         final EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -150,16 +120,25 @@ public class JohannahServer {
         }
     }
     
-    public static void main(String[] args) throws CmdLineException {
-        JohannahServer johannahServer = new JohannahServer();
-        CmdLineParser cmdLineParser = new CmdLineParser(johannahServer);
-        cmdLineParser.parseArgument(args);
-        if (johannahServer.help) {
-            cmdLineParser.printUsage(System.err);
-            System.err.flush();
-            return;
+    public static void main(String[] args) {
+        CmdLineParser cmdLineParser = null;
+        try {
+            JohannahServer johannahServer = new JohannahServer();
+            cmdLineParser = new CmdLineParser(johannahServer);
+            cmdLineParser.parseArgument(args);
+            if (johannahServer.help) {
+                cmdLineParser.printUsage(System.err);
+                System.err.flush();
+                return;
+            }
+            JohannahServer.setDebug(johannahServer.debug);
+            johannahServer.run();
+        } catch (CmdLineException ex) {
+            System.err.println(ex);
+            if (cmdLineParser != null) {
+                cmdLineParser.printUsage(System.err);
+                System.err.flush();
+            }
         }
-        JohannahServer.setDebug(johannahServer.debug);
-        johannahServer.run();
     }
 }
