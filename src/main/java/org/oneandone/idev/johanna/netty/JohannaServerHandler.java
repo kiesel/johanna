@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.codec.binary.Hex;
 import org.oneandone.idev.johanna.protocol.Response;
 import org.oneandone.idev.johanna.store.SessionStore;
 
@@ -85,13 +86,7 @@ public class JohannaServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     private String prefixFor(final InetAddress address) {
-        final StringBuilder builder= new StringBuilder(32);
-        
-        for (byte b : address.getAddress()) {
-            builder.append(String.format("%02x", b));
-        }
-        
-        return builder.toString();
+        return Hex.encodeHexString(address.getAddress());
     }
     
 }

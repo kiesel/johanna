@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -38,9 +39,8 @@ public class MD5Identifier extends Identifier {
     public static Identifier forId(String id) {
         Objects.requireNonNull(id);
         
-        // TODO IPv6
-        MD5Identifier self= new MD5Identifier(id.substring(0, 8));
-        self.id= DatatypeConverter.parseHexBinary(id.substring(8));
+        MD5Identifier self= new MD5Identifier(prefixPartOf(id));
+        self.id= DatatypeConverter.parseHexBinary(uniquePartOf(id));
         
         return self;
     }
@@ -55,12 +55,7 @@ public class MD5Identifier extends Identifier {
 
     @Override
     protected String uniqid() {
-        StringBuilder builder= new StringBuilder(32);
-        
-        for (byte b : this.id) {
-            builder.append(String.format("%02x", b));
-        }
-        return builder.toString();
+        return Hex.encodeHexString(id);
     }
 
     private void initRandom() throws NoSuchAlgorithmException {

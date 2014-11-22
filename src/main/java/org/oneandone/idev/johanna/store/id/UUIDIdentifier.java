@@ -1,5 +1,6 @@
 package org.oneandone.idev.johanna.store.id;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -16,7 +17,7 @@ public class UUIDIdentifier extends Identifier {
     
     public UUIDIdentifier(String prefix, UUID id) {
         super(prefix);
-        this.id= id;
+        this.id= Objects.requireNonNull(id);
     }
 
     public UUIDIdentifier() {
@@ -25,8 +26,8 @@ public class UUIDIdentifier extends Identifier {
     
     public static UUIDIdentifier forId(String id) {
         return new UUIDIdentifier(
-                id.substring(0, 8),
-                UUID.fromString(id.substring(8))
+                prefixPartOf(id),
+                UUID.fromString(uniquePartOf(id))
         );
     }
     
