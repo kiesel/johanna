@@ -16,10 +16,11 @@ public abstract class Identifier {
     /** This is a special char for separating the (optional) ip prefix from the
      * unique generated id.
      */
-    final static char PREFIX_SEPARATOR=';';
+    private final char prefixSeparator;
     
-    public Identifier(String prefix) {
+    public Identifier(String prefix, IdentifierFactory identifierFactory) {
         this.prefix= Objects.requireNonNull(prefix);
+        this.prefixSeparator = identifierFactory.getIdentifierSeparator();
     }
     
     protected String prefix() {
@@ -28,14 +29,14 @@ public abstract class Identifier {
     
     @Override
     public String toString() {
-        return this.prefix + PREFIX_SEPARATOR + this.uniqid();
+        return this.prefix + prefixSeparator + this.uniqid();
     }
 
     /** Extracts the unique generated uniqid part of a identifier string. 
      * @see #uniqid() 
      */
-    protected final static String uniquePartOf(String inIdentifier) {
-        int index = inIdentifier.indexOf(PREFIX_SEPARATOR);
+    protected final static String uniquePartOf(String inIdentifier, IdentifierFactory identifierFactory) {
+        int index = inIdentifier.indexOf(identifierFactory.getIdentifierSeparator());
 
         if (index == -1) {
             return inIdentifier; // no separator found
@@ -47,8 +48,8 @@ public abstract class Identifier {
     /** Extracts the prefix part of a identifier string. 
      * @see #prefix() 
      */
-    protected final static String prefixPartOf(String inIdentifier) {
-        int index = inIdentifier.indexOf(PREFIX_SEPARATOR);
+    protected final static String prefixPartOf(String inIdentifier, IdentifierFactory identifierFactory) {
+        int index = inIdentifier.indexOf(identifierFactory.getIdentifierSeparator());
 
         if (index == -1) {
             return ""; // no separator found

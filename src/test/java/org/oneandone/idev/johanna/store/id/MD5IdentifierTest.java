@@ -21,6 +21,6 @@ public class MD5IdentifierTest {
      */
     @Test
     public void uniqid_wo_prefix_is_33_chars() {
-        assertEquals(33, new MD5Identifier("").toString().length());
+        assertEquals(33, new MD5Identifier("", new IdentifierFactory('x', IdentifierFlavor.MD5)).toString().length());
     }
 }

@@ -23,7 +23,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.oneandone.idev.johanna.netty.JohannaServerHandler;
 import org.oneandone.idev.johanna.store.SessionStore;
-import org.oneandone.idev.johanna.store.id.IdentifierFactory;    
+import org.oneandone.idev.johanna.store.id.IdentifierFactory;
+import org.oneandone.idev.johanna.store.id.IdentifierFlavor;    
     
 /**
  * Discards any incoming data.
@@ -50,7 +51,13 @@ public class JohannahServer {
     private SessionStoreFactory backendName = SessionStoreFactory.MEMORY;
     
     @Option(name = "--identifier", aliases = "-i", usage = "The identifier factory to use")
-    private IdentifierFactory identifierFactory = IdentifierFactory.MD5;    
+    private IdentifierFlavor identifierFlavor = IdentifierFlavor.MD5;    
+    
+    @Option(name = "--separator", aliases = "-s", usage = "The identifier separator character to use. Separates the IP address prefix and the unique session ID.")
+    private char identifierSeparator = 'x';
+    
+    /** Calculated out of {@link #identifierFlavor}. */
+    private IdentifierFactory identifierFactory;
     
     SessionStore store;
     
@@ -76,6 +83,7 @@ public class JohannahServer {
     private void runInternal() throws Exception {
         LOG.info("Server startup.");
 
+        identifierFactory = new IdentifierFactory(';', identifierFlavor);
         this.store = backendName.create(identifierFactory, host);
 
         final EventLoopGroup bossGroup = new NioEventLoopGroup();

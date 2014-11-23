@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.oneandone.idev.johanna.store.id.IdentifierFactory;
+import org.oneandone.idev.johanna.store.id.IdentifierFlavor;
 
 /**
  *
@@ -22,7 +23,7 @@ public class MemorySessionStoreTest {
     
     @Before
     public void setUp() {
-        this.cut= new MemorySessionStore(IdentifierFactory.MD5);
+        this.cut= new MemorySessionStore(new IdentifierFactory('x', IdentifierFlavor.MD5));
     }
 
     /**

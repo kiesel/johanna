@@ -22,8 +22,8 @@ public class MD5Identifier extends Identifier {
 
     private byte[] id;
 
-    public MD5Identifier(String prefix) {
-        super(prefix);
+    public MD5Identifier(String prefix, IdentifierFactory identifierFactory) {
+        super(prefix, identifierFactory);
         try {
             initRandom();
             this.createUniqid();
@@ -32,15 +32,16 @@ public class MD5Identifier extends Identifier {
         }
     }
 
-    MD5Identifier() {
-        this("");
+    MD5Identifier(IdentifierFactory identifierFactory) {
+        this("", identifierFactory);
     }
     
-    public static Identifier forId(String id) {
+    public static Identifier forId(String id, IdentifierFactory identifierFactory) {
         Objects.requireNonNull(id);
+        Objects.requireNonNull(identifierFactory);
         
-        MD5Identifier self= new MD5Identifier(prefixPartOf(id));
-        self.id= DatatypeConverter.parseHexBinary(uniquePartOf(id));
+        MD5Identifier self= new MD5Identifier(prefixPartOf(id, identifierFactory), identifierFactory);
+        self.id= DatatypeConverter.parseHexBinary(uniquePartOf(id, identifierFactory));
         
         return self;
     }

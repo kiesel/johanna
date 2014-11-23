@@ -10,24 +10,25 @@ import java.util.UUID;
 public class UUIDIdentifier extends Identifier {
     private final UUID id;
 
-    public UUIDIdentifier(String prefix) {
-        super(prefix);
+    public UUIDIdentifier(String prefix, IdentifierFactory identifierFactory) {
+        super(prefix, identifierFactory);
         this.id= UUID.randomUUID();
     }
     
-    public UUIDIdentifier(String prefix, UUID id) {
-        super(prefix);
+    public UUIDIdentifier(String prefix, UUID id, IdentifierFactory identifierFactory) {
+        super(prefix, identifierFactory);
         this.id= Objects.requireNonNull(id);
     }
 
-    public UUIDIdentifier() {
-        this("");
+    public UUIDIdentifier(IdentifierFactory identifierFactory) {
+        this("", identifierFactory);
     }
     
-    public static UUIDIdentifier forId(String id) {
+    public static UUIDIdentifier forId(String id, IdentifierFactory identifierFactory) {
         return new UUIDIdentifier(
-                prefixPartOf(id),
-                UUID.fromString(uniquePartOf(id))
+                prefixPartOf(id, identifierFactory),
+                UUID.fromString(uniquePartOf(id, identifierFactory)),
+                identifierFactory
         );
     }
     

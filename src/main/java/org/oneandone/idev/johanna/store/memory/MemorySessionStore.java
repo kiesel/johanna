@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import org.oneandone.idev.johanna.store.AbstractSession;
 import org.oneandone.idev.johanna.store.id.Identifier;
 import org.oneandone.idev.johanna.store.SessionStore;
-import org.oneandone.idev.johanna.store.Value;
 import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 
 /**
@@ -25,13 +24,13 @@ import org.oneandone.idev.johanna.store.id.IdentifierFactory;
 public class MemorySessionStore implements SessionStore {
     private static final Logger LOG = Logger.getLogger(MemorySessionStore.class.getName());
     private Map<String, AbstractSession> store;
-    private IdentifierFactory idFactory;
 
     private int intervalGC= 60000;
     private Timer gc;
+    private IdentifierFactory identifierFactory;
 
-    public MemorySessionStore(IdentifierFactory f) {
-        this.setIdentifierFactory(f);
+    public MemorySessionStore(IdentifierFactory identifierFactory) {
+        this.setIdentifierFactory(identifierFactory);
         this.store = new ConcurrentHashMap<>();
     }
     
@@ -47,7 +46,7 @@ public class MemorySessionStore implements SessionStore {
     
     @Override
     public AbstractSession createSession(String prefix, int ttl) {
-        return this.createSession(this.idFactory.newIdentifier(prefix), ttl);
+        return this.createSession(this.identifierFactory.newIdentifier(prefix), ttl);
     }
     
     @Override
@@ -159,6 +158,6 @@ public class MemorySessionStore implements SessionStore {
 
     @Override
     public final void setIdentifierFactory(IdentifierFactory f) {
-        this.idFactory= Objects.requireNonNull(f);
+        this.identifierFactory = Objects.requireNonNull(f);
     }
 }
