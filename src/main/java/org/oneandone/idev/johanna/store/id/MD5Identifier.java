@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -21,8 +22,8 @@ public class MD5Identifier extends Identifier {
 
     private byte[] id;
 
-    public MD5Identifier(String prefix) {
-        super(prefix);
+    public MD5Identifier(String prefix, IdentifierFactory identifierFactory) {
+        super(prefix, identifierFactory);
         try {
             initRandom();
             this.createUniqid();
@@ -31,16 +32,16 @@ public class MD5Identifier extends Identifier {
         }
     }
 
-    MD5Identifier() {
-        this("");
+    MD5Identifier(IdentifierFactory identifierFactory) {
+        this("", identifierFactory);
     }
     
-    public static Identifier forId(String id) {
+    public static Identifier forId(String id, IdentifierFactory identifierFactory) {
         Objects.requireNonNull(id);
+        Objects.requireNonNull(identifierFactory);
         
-        // TODO IPv6
-        MD5Identifier self= new MD5Identifier(id.substring(0, 8));
-        self.id= DatatypeConverter.parseHexBinary(id.substring(8));
+        MD5Identifier self= new MD5Identifier(prefixPartOf(id, identifierFactory), identifierFactory);
+        self.id= DatatypeConverter.parseHexBinary(uniquePartOf(id, identifierFactory));
         
         return self;
     }
@@ -55,12 +56,7 @@ public class MD5Identifier extends Identifier {
 
     @Override
     protected String uniqid() {
-        StringBuilder builder= new StringBuilder(32);
-        
-        for (byte b : this.id) {
-            builder.append(String.format("%02x", b));
-        }
-        return builder.toString();
+        return Hex.encodeHexString(id);
     }
 
     private void initRandom() throws NoSuchAlgorithmException {
